@@ -1,118 +1,140 @@
+/* Class Card - Clean Modern */
 .class-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-normal);
 }
 
 .class-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-lg);
 }
 
+/* Card Header */
 .class-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .class-card-header h3 {
-  margin: 0;
-  color: #333;
-  font-size: 1.4rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.class-instructor {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
 .capacity-badge {
-  background: #4caf50;
-  color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: bold;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.75rem;
 }
 
 .capacity-badge.full {
-  background: #f44336;
+  background: rgba(248, 113, 113, 0.2);
+  color: var(--error-color);
 }
 
+.capacity-badge.available {
+  background: rgba(74, 222, 128, 0.2);
+  color: var(--success-color);
+}
+
+/* Card Body */
 .class-description {
-  color: #666;
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  padding: 1rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .class-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f5f5f5;
-  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
 }
 
 .info-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.info-label {
-  font-weight: 600;
-  color: #555;
-}
-
-.class-actions {
-  display: flex;
   gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
-.btn-view,
-.btn-book {
-  flex: 1;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
+.info-item svg {
+  color: var(--accent-color);
+  font-size: 1rem;
 }
 
+/* Card Actions */
+.class-actions {
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-book,
 .btn-view {
-  background: #f0f0f0;
-  color: #333;
-}
-
-.btn-view:hover {
-  background: #e0e0e0;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  text-decoration: none;
 }
 
 .btn-book {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-color);
   color: white;
+  border: none;
 }
 
-.btn-book:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+.btn-book:hover {
+  background: var(--accent-dark);
 }
 
 .btn-book:disabled {
-  background: #ccc;
+  background: var(--bg-hover);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
-  .class-card {
+.btn-view {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-view:hover {
+  color: white;
+  border-color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .class-card-header,
+  .class-description,
+  .class-info,
+  .class-actions {
     padding: 1rem;
   }
-
-  .class-card-header h3 {
-    font-size: 1.2rem;
-  }
-
+  
   .class-actions {
     flex-direction: column;
   }

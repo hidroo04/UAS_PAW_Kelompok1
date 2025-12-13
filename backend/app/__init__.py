@@ -1,10 +1,18 @@
+"""
+Gym Booking System - Backend Application
+Modern, professional, and well-structured Pyramid application
+"""
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 from sqlalchemy.orm import sessionmaker
+from .config import config as app_config
 
 
 def cors_tween_factory(handler, registry):
-    """CORS tween to add headers to all responses"""
+    """
+    CORS tween to add headers to all responses
+    Enables cross-origin requests from frontend
+    """
     def cors_tween(request):
         response = handler(request)
         response.headers.update({
@@ -18,17 +26,28 @@ def cors_tween_factory(handler, registry):
 
 
 def main(global_config, **settings):
-    """This function returns a Pyramid WSGI application."""
+    """
+    This function returns a Pyramid WSGI application.
+    It configures the application with database, routes, and views.
+    """
     config = Configurator(settings=settings)
     
-    # Add CORS tween
+    # Add CORS tween for cross-origin support
     config.add_tween('app.cors_tween_factory')
     
     # Database configuration
+    # Use environment variable if available, otherwise use settings
+    if 'sqlalchemy.url' not in settings:
+        settings['sqlalchemy.url'] = app_config.DATABASE_URL
+    
     engine = engine_from_config(settings, 'sqlalchemy.')
     session_factory = sessionmaker(bind=engine)
     
     def get_db(request):
+        """
+        Database session factory
+        Automatically handles session lifecycle
+        """
         session = session_factory()
         def cleanup(request):
             session.close()
@@ -37,36 +56,14 @@ def main(global_config, **settings):
     
     config.add_request_method(get_db, 'dbsession', reify=True)
     
-    # CORS OPTIONS route (catch-all for preflight)
+    # CORS OPTIONS route (catch-all for preflight requests)
     config.add_route('options', '/*path', request_method='OPTIONS')
     
-    # Routes - Authentication
-    config.add_route('home', '/')
-    config.add_route('auth_register', '/api/auth/register')
-    config.add_route('auth_login', '/api/auth/login')
-    config.add_route('auth_logout', '/api/auth/logout')
-    config.add_route('auth_me', '/api/auth/me')
+    # Include all routes from modular route files
+    from .routes import include_routes
+    include_routes(config)
     
-    # Routes - Classes
-    config.add_route('api_classes', '/api/classes')
-    config.add_route('api_class', '/api/classes/{id}')
-    config.add_route('api_class_participants', '/api/classes/{id}/participants')
-    
-    # Routes - Bookings
-    config.add_route('api_bookings', '/api/bookings')
-    config.add_route('api_booking', '/api/bookings/{id}')
-    config.add_route('api_my_bookings', '/api/bookings/my')
-    
-    # Routes - Attendance
-    config.add_route('api_attendance', '/api/attendance')
-    config.add_route('api_my_attendance', '/api/attendance/my')
-    
-    # Routes - Membership
-    config.add_route('api_membership_plans', '/api/membership/plans')
-    config.add_route('api_my_membership', '/api/membership/my')
-    config.add_route('api_members', '/api/members')
-    
-    # Scan views
+    # Scan views to register all view callables
     config.scan('.views')
     
     return config.make_wsgi_app()

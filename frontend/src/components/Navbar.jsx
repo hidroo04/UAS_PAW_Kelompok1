@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaDumbbell, FaBars, FaTimes } from "react-icons/fa";
 import "./Navbar.css";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,44 +23,60 @@ const Navbar = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
+    setIsMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          <span className="logo-icon">💪</span>
-          GymBook
+        <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
+          <FaDumbbell className="logo-icon" />
+          <span>FitZone Gym</span>
         </Link>
 
-        <ul className="navbar-menu">
+        <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
+        <ul className={`navbar-menu ${isMobileMenuOpen ? 'active' : ''}`}>
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/" onClick={closeMobileMenu}>Home</Link>
           </li>
           <li>
-            <Link to="/classes">Classes</Link>
+            <Link to="/classes" onClick={closeMobileMenu}>Classes</Link>
+          </li>
+          <li>
+            <Link to="/membership" onClick={closeMobileMenu}>Membership</Link>
           </li>
 
           {user ? (
             <>
               <li>
-                <Link to="/my-bookings">My Bookings</Link>
+                <Link to="/my-bookings" onClick={closeMobileMenu}>My Bookings</Link>
               </li>
-              {user.role === "trainer" && (
-                <li>
-                  <Link to="/manage-classes">Manage Classes</Link>
-                </li>
-              )}
-              {user.role === "admin" && (
-                <li>
-                  <Link to="/admin">Admin</Link>
-                </li>
-              )}
               <li>
-                <Link to="/membership">Membership</Link>
+                <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
               </li>
+              {user.role === "TRAINER" && (
+                <li>
+                  <Link to="/manage-classes" onClick={closeMobileMenu}>Manage</Link>
+                </li>
+              )}
+              {user.role === "ADMIN" && (
+                <li>
+                  <Link to="/admin" onClick={closeMobileMenu}>Admin</Link>
+                </li>
+              )}
               <li className="navbar-user">
-                <span>{user.name}</span>
+                <span className="user-name">{user.name}</span>
                 <button onClick={handleLogout} className="btn-logout">
                   Logout
                 </button>
@@ -67,13 +85,13 @@ const Navbar = () => {
           ) : (
             <>
               <li>
-                <Link to="/login" className="btn-primary">
+                <Link to="/login" className="nav-btn btn-login" onClick={closeMobileMenu}>
                   Login
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="btn-secondary">
-                  Register
+                <Link to="/register" className="nav-btn btn-register" onClick={closeMobileMenu}>
+                  Join Now
                 </Link>
               </li>
             </>

@@ -1,5 +1,23 @@
-pyramid
-waitress
-SQLAlchemy
-alembic
-psycopg2-binary
+# Core Framework
+pyramid==2.0.2
+waitress==2.1.2
+
+# Database
+SQLAlchemy==2.0.23
+alembic==1.13.1
+psycopg2-binary==2.9.9
+
+# Authentication & Security
+PyJWT==2.8.0
+passlib==1.7.4
+bcrypt==4.1.2
+
+# Configuration
+python-dotenv==1.0.0
+
+# CORS
+pyramid-cors==0.2
+
+# Testing (optional)
+pytest==7.4.3
+pytest-cov==4.1.0
