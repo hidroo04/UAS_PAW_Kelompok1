@@ -18,7 +18,8 @@ const MembershipPlans = () => {
     try {
       setLoading(true);
       const response = await apiClient.get('/membership/plans');
-      setPlans(response.data);
+      // Backend returns {status, data}, so we need response.data.data
+      setPlans(response.data.data || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching plans:', err);
