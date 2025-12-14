@@ -169,6 +169,159 @@
   margin: 2rem auto;
 }
 
+/* Booking Confirmation Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 2rem 1.5rem;
+}
+
+.modal-question {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.class-info-modal {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.class-info-modal h3 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+}
+
+.class-info-modal p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.class-info-modal strong {
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-cancel:hover {
+  background: var(--border-color);
+}
+
+.btn-confirm {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .page-header {
@@ -188,4 +341,18 @@
     padding: 1.5rem;
     gap: 1rem;
   }
+
+  .modal-content {
+    margin: 1rem;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+  }
 }
+

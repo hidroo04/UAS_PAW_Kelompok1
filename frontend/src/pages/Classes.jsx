@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch, FaFilter, FaStar } from "react-icons/fa";
 import ClassCard from "../components/ClassCard";
 import Loading from "../components/Loading";
@@ -6,10 +7,13 @@ import apiClient from "../services/api";
 import "./Classes.css";
 
 const Classes = () => {
+  const navigate = useNavigate();
   const [classes, setClasses] = useState([]);
   const [filteredClasses, setFilteredClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedClass, setSelectedClass] = useState(null);
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,15 +83,31 @@ const Classes = () => {
       return;
     }
 
+    // Find the class details
+    const classToBook = classes.find(cls => cls.id === classId);
+    setSelectedClass(classToBook);
+    setShowModal(true);
+  };
+
+  const confirmBooking = async () => {
     try {
-      const response = await apiClient.post("/bookings", { class_id: classId });
+      const response = await apiClient.post("/bookings", { class_id: selectedClass.id });
       if (response.data.status === "success") {
-        alert("Class booked successfully!");
-        fetchClasses(); // Refresh
+        setShowModal(false);
+        // Show success message
+        alert(`Booking berhasil! Kelas "${selectedClass.name}" telah ditambahkan ke My Bookings.`);
+        // Redirect to My Bookings page
+        navigate('/my-bookings');
       }
     } catch (err) {
+      setShowModal(false);
       alert(err.response?.data?.message || "Booking failed");
     }
+  };
+
+  const cancelBooking = () => {
+    setShowModal(false);
+    setSelectedClass(null);
   };
 
   const clearFilters = () => {
@@ -197,6 +217,44 @@ const Classes = () => {
           )}
         </div>
       </div>
+
+      {/* Booking Confirmation Modal */}
+      {showModal && selectedClass && (
+        <div className="modal-overlay" onClick={cancelBooking}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Konfirmasi Booking</h2>
+              <button className="modal-close" onClick={cancelBooking}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-question">
+                Apakah Anda yakin ingin booking kelas ini?
+              </p>
+              <div className="class-info-modal">
+                <h3>{selectedClass.name}</h3>
+                <p><strong>Jadwal:</strong> {new Date(selectedClass.schedule).toLocaleString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</p>
+                <p><strong>Trainer:</strong> {selectedClass.trainer?.name || 'N/A'}</p>
+                <p><strong>Kapasitas:</strong> {selectedClass.available_slots || selectedClass.capacity} slot tersedia</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-cancel" onClick={cancelBooking}>
+                Batal
+              </button>
+              <button className="btn-confirm" onClick={confirmBooking}>
+                Ya, Booking Sekarang
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
