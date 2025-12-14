@@ -122,6 +122,28 @@ const UserProfile = () => {
             <label>Role</label>
             <span className="role-badge">{userData?.role}</span>
           </div>
+          {userData?.membership_plan && (
+            <>
+              <div className="detail-row">
+                <label>Membership Plan</label>
+                <span className={`membership-badge ${userData.membership_plan.toLowerCase()}`}>
+                  {userData.membership_plan}
+                </span>
+              </div>
+              <div className="detail-row">
+                <label>Status</label>
+                <span className={`status-badge ${userData.membership_status}`}>
+                  {userData.membership_status}
+                </span>
+              </div>
+              {userData.membership_expiry && (
+                <div className="detail-row">
+                  <label>Expires</label>
+                  <span>{new Date(userData.membership_expiry).toLocaleDateString()}</span>
+                </div>
+              )}
+            </>
+          )}
           <button className="btn-edit" onClick={() => setEditMode(true)}>
             <FaEdit /> Edit Profile
           </button>

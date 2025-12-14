@@ -141,6 +141,37 @@
   text-transform: uppercase;
 }
 
+.membership-badge {
+  padding: 0.5rem 1rem;
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.membership-badge.basic {
+  background: linear-gradient(135deg, #6B7280, #9CA3AF);
+}
+
+.membership-badge.premium {
+  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+}
+
+.membership-badge.vip {
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+}
+
+.status-badge.active {
+  color: #10B981;
+  font-weight: 600;
+}
+
+.status-badge.expired {
+  color: #EF4444;
+  font-weight: 600;
+}
+
 .btn-edit {
   margin-top: var(--spacing-lg);
   padding: 1rem;

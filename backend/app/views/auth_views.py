@@ -219,6 +219,13 @@ def get_current_user(request):
             'name': user.name
         }
         
+        # Add membership info if user is a member
+        if user.role.value == 'member' and user.member:
+            user_data['membership_plan'] = user.member.membership_plan
+            user_data['membership_status'] = 'active' if user.member.is_active() else 'expired'
+            if user.member.expiry_date:
+                user_data['membership_expiry'] = user.member.expiry_date.isoformat()
+        
         return {
             'status': 'success',
             'data': user_data
