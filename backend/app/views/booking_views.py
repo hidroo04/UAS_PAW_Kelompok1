@@ -3,58 +3,78 @@ Booking views - Book classes, view bookings, cancel bookings
 """
 from pyramid.view import view_config
 from pyramid.response import Response
+from sqlalchemy import and_
 import json
 from datetime import datetime
+from ..models import Booking, GymClass, User, Member
+from sqlalchemy.orm import joinedload
 
 
-# Mock bookings data
-mock_bookings = [
-    {
-        'id': 1,
-        'member_id': 1,
-        'class_id': 1,
-        'booking_date': '2025-12-12T10:00:00',
-        'member': {
-            'id': 1,
-            'user_id': 1,
-            'membership_plan': 'Premium',
-            'user': {'id': 1, 'name': 'Jane Member', 'email': 'jane@example.com'}
-        },
-        'class': {
-            'id': 1,
-            'name': 'Yoga Morning',
-            'schedule': '2025-12-15T07:00:00',
-            'trainer': {'name': 'John Trainer'}
-        }
-    }
-]
+from ..models import Booking, GymClass, User, Member
+from sqlalchemy.orm import joinedload
 
 
 @view_config(route_name='api_bookings', renderer='json', request_method='GET')
 def get_bookings(request):
-    """Get all bookings (filtered by user role)"""
+    """Get all bookings from database"""
     try:
-        # In real app, filter by authenticated user
-        # For trainer: show all bookings for their classes
-        # For member: show only their bookings
+        db = request.dbsession
+        
+        # Query bookings with relationships
+        bookings = db.query(Booking).options(
+            joinedload(Booking.gym_class).joinedload(GymClass.trainer),
+            joinedload(Booking.member).joinedload(Member.user)
+        ).all()
+        
+        bookings_data = []
+        for booking in bookings:
+            booking_dict = {
+                'id': booking.id,
+                'member_id': booking.member_id,
+                'class_id': booking.class_id,
+                'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+                'class': {
+                    'id': booking.gym_class.id,
+                    'name': booking.gym_class.name,
+                    'description': booking.gym_class.description,
+                    'schedule': booking.gym_class.schedule.isoformat() if booking.gym_class.schedule else None,
+                    'capacity': booking.gym_class.capacity,
+                    'trainer': {
+                        'id': booking.gym_class.trainer.id,
+                        'name': booking.gym_class.trainer.name,
+                        'email': booking.gym_class.trainer.email
+                    } if booking.gym_class.trainer else None
+                } if booking.gym_class else None,
+                'member': {
+                    'id': booking.member.id,
+                    'user_id': booking.member.user_id,
+                    'user': {
+                        'id': booking.member.user.id,
+                        'name': booking.member.user.name,
+                        'email': booking.member.user.email
+                    } if booking.member.user else None
+                } if booking.member else None
+            }
+            bookings_data.append(booking_dict)
         
         return {
             'status': 'success',
-            'data': mock_bookings,
-            'count': len(mock_bookings)
+            'data': bookings_data,
+            'count': len(bookings_data)
         }
     except Exception as e:
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
 @view_config(route_name='api_bookings', renderer='json', request_method='POST')
 def create_booking(request):
-    """Create new booking (Member only)"""
+    """Create new booking in database"""
     try:
+        db = request.dbsession
         data = request.json_body
         
         # Validation
@@ -62,107 +82,197 @@ def create_booking(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'class_id is required'}),
                 status=400,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         class_id = data['class_id']
         
-        # Check if class exists and has available slots (mock)
-        # In real app, query database
+        # Get user_id from token (mock: use member@gym.com = user_id 3)
+        user_id = 3  # In real app, extract from JWT token
         
-        # Check if member already booked this class
-        existing_booking = next(
-            (b for b in mock_bookings if b['member_id'] == 1 and b['class_id'] == class_id),
-            None
-        )
+        # Find member by user_id
+        member = db.query(Member).filter(Member.user_id == user_id).first()
+        if not member:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Member not found'}),
+                status=404,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Check if class exists
+        gym_class = db.query(GymClass).filter(GymClass.id == class_id).first()
+        if not gym_class:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Class not found'}),
+                status=404,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Check if already booked
+        existing_booking = db.query(Booking).filter(
+            and_(
+                Booking.member_id == member.id,
+                Booking.class_id == class_id
+            )
+        ).first()
         
         if existing_booking:
             return Response(
                 json.dumps({'status': 'error', 'message': 'You have already booked this class'}),
                 status=400,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
-        # Create booking (mock)
-        new_booking = {
-            'id': len(mock_bookings) + 1,
-            'member_id': 1,  # Mock member ID
-            'class_id': class_id,
-            'booking_date': datetime.utcnow().isoformat(),
-            'member': {
-                'id': 1,
-                'user_id': 1,
-                'membership_plan': 'Premium',
-                'user': {'id': 1, 'name': 'Jane Member', 'email': 'jane@example.com'}
-            },
+        # Check capacity
+        current_bookings = db.query(Booking).filter(Booking.class_id == class_id).count()
+        if current_bookings >= gym_class.capacity:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Class is fully booked'}),
+                status=400,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Create booking
+        new_booking = Booking(
+            member_id=member.id,
+            class_id=class_id,
+            booking_date=datetime.utcnow()
+        )
+        
+        db.add(new_booking)
+        db.flush()  # Get the ID
+        
+        # Load relationships for response
+        db.refresh(new_booking)
+        booking_with_relations = db.query(Booking).options(
+            joinedload(Booking.gym_class).joinedload(GymClass.trainer),
+            joinedload(Booking.member).joinedload(Member.user)
+        ).filter(Booking.id == new_booking.id).first()
+        
+        booking_dict = {
+            'id': booking_with_relations.id,
+            'member_id': booking_with_relations.member_id,
+            'class_id': booking_with_relations.class_id,
+            'booking_date': booking_with_relations.booking_date.isoformat(),
             'class': {
-                'id': class_id,
-                'name': 'Sample Class',
-                'schedule': '2025-12-15T10:00:00'
+                'id': booking_with_relations.gym_class.id,
+                'name': booking_with_relations.gym_class.name,
+                'schedule': booking_with_relations.gym_class.schedule.isoformat() if booking_with_relations.gym_class.schedule else None,
+                'trainer': {
+                    'name': booking_with_relations.gym_class.trainer.name
+                } if booking_with_relations.gym_class.trainer else None
             }
         }
-        
-        mock_bookings.append(new_booking)
         
         return {
             'status': 'success',
             'message': 'Class booked successfully',
-            'data': new_booking
+            'data': booking_dict
         }
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
 @view_config(route_name='api_booking', renderer='json', request_method='GET')
 def get_booking(request):
-    """Get single booking by ID"""
+    """Get single booking by ID from database"""
     try:
+        db = request.dbsession
         booking_id = int(request.matchdict['id'])
         
-        booking = next((b for b in mock_bookings if b['id'] == booking_id), None)
+        booking = db.query(Booking).options(
+            joinedload(Booking.gym_class).joinedload(GymClass.trainer),
+            joinedload(Booking.member).joinedload(Member.user)
+        ).filter(Booking.id == booking_id).first()
         
         if not booking:
             return Response(
                 json.dumps({'status': 'error', 'message': 'Booking not found'}),
                 status=404,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
+        
+        booking_dict = {
+            'id': booking.id,
+            'member_id': booking.member_id,
+            'class_id': booking.class_id,
+            'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+            'class': {
+                'id': booking.gym_class.id,
+                'name': booking.gym_class.name,
+                'description': booking.gym_class.description,
+                'schedule': booking.gym_class.schedule.isoformat() if booking.gym_class.schedule else None,
+                'capacity': booking.gym_class.capacity,
+                'trainer': {
+                    'id': booking.gym_class.trainer.id,
+                    'name': booking.gym_class.trainer.name
+                } if booking.gym_class.trainer else None
+            } if booking.gym_class else None,
+            'member': {
+                'id': booking.member.id,
+                'user': {
+                    'name': booking.member.user.name,
+                    'email': booking.member.user.email
+                } if booking.member.user else None
+            } if booking.member else None
+        }
         
         return {
             'status': 'success',
-            'data': booking
+            'data': booking_dict
         }
         
     except Exception as e:
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
 @view_config(route_name='api_booking', renderer='json', request_method='DELETE')
 def cancel_booking(request):
-    """Cancel booking (Member only - own bookings)"""
+    """Cancel booking from database"""
     try:
+        db = request.dbsession
         booking_id = int(request.matchdict['id'])
         
-        # Find and remove booking
-        global mock_bookings
-        original_length = len(mock_bookings)
-        mock_bookings = [b for b in mock_bookings if b['id'] != booking_id]
+        # Get user_id from token (mock: use member@gym.com = user_id 3)
+        user_id = 3  # In real app, extract from JWT token
         
-        if len(mock_bookings) == original_length:
+        # Find member
+        member = db.query(Member).filter(Member.user_id == user_id).first()
+        if not member:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Member not found'}),
+                status=404,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Find booking
+        booking = db.query(Booking).filter(
+            and_(
+                Booking.id == booking_id,
+                Booking.member_id == member.id  # Ensure member owns this booking
+            )
+        ).first()
+        
+        if not booking:
             return Response(
                 json.dumps({'status': 'error', 'message': 'Booking not found'}),
                 status=404,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
+        
+        # Delete booking
+        db.delete(booking)
         
         return {
             'status': 'success',
@@ -170,30 +280,71 @@ def cancel_booking(request):
         }
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
 @view_config(route_name='api_my_bookings', renderer='json', request_method='GET')
 def get_my_bookings(request):
-    """Get bookings for current authenticated member"""
+    """Get bookings for current authenticated member from database"""
     try:
-        # In real app, get user_id from JWT token
-        # Filter bookings by member_id
+        db = request.dbsession
         
-        my_bookings = [b for b in mock_bookings if b['member_id'] == 1]  # Mock member ID
+        # Get user_id from token (mock: use member@gym.com = user_id 3)
+        user_id = 3  # In real app, extract from JWT token
+        
+        # Find member by user_id
+        member = db.query(Member).filter(Member.user_id == user_id).first()
+        if not member:
+            return {
+                'status': 'success',
+                'data': [],
+                'count': 0
+            }
+        
+        # Query bookings for this member
+        bookings = db.query(Booking).options(
+            joinedload(Booking.gym_class).joinedload(GymClass.trainer),
+            joinedload(Booking.member).joinedload(Member.user)
+        ).filter(Booking.member_id == member.id).all()
+        
+        bookings_data = []
+        for booking in bookings:
+            booking_dict = {
+                'id': booking.id,
+                'member_id': booking.member_id,
+                'class_id': booking.class_id,
+                'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+                'class': {
+                    'id': booking.gym_class.id,
+                    'name': booking.gym_class.name,
+                    'description': booking.gym_class.description,
+                    'schedule': booking.gym_class.schedule.isoformat() if booking.gym_class.schedule else None,
+                    'capacity': booking.gym_class.capacity,
+                    'trainer': {
+                        'id': booking.gym_class.trainer.id,
+                        'name': booking.gym_class.trainer.name,
+                        'email': booking.gym_class.trainer.email
+                    } if booking.gym_class.trainer else None
+                } if booking.gym_class else None
+            }
+            bookings_data.append(booking_dict)
         
         return {
             'status': 'success',
-            'data': my_bookings,
-            'count': len(my_bookings)
+            'data': bookings_data,
+            'count': len(bookings_data)
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
