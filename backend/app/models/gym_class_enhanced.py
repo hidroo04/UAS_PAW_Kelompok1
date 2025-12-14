@@ -39,12 +39,12 @@ class GymClass(Base):
     name = Column(String(100), nullable=False)
     description = Column(Text)
     schedule = Column(DateTime, nullable=False)
-    duration = Column(Integer, nullable=False, default=60)  # in minutes
+    # duration = Column(Integer, nullable=False, default=60)  # in minutes - DISABLED: column not in DB
     capacity = Column(Integer, nullable=False, default=20)
-    class_type = Column(SQLEnum(ClassType), default=ClassType.GENERAL)
-    difficulty = Column(SQLEnum(Difficulty), default=Difficulty.ALL_LEVELS)
+    # class_type = Column(SQLEnum(ClassType), default=ClassType.GENERAL)  # DISABLED: column not in DB
+    # difficulty = Column(SQLEnum(Difficulty), default=Difficulty.ALL_LEVELS)  # DISABLED: column not in DB
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # DISABLED: column not in DB
     
     # Relationships
     trainer = relationship("User", back_populates="trainer_classes", foreign_keys=[trainer_id])
@@ -64,19 +64,19 @@ class GymClass(Base):
             'name': self.name,
             'description': self.description,
             'schedule': self.schedule.isoformat() if self.schedule else None,
-            'duration': self.duration,
+            'duration': 60,  # default value since column doesn't exist
             'capacity': self.capacity,
-            'class_type': self.class_type.value if self.class_type else 'General',
-            'difficulty': self.difficulty.value if self.difficulty else 'All Levels',
-            'booked_count': len([b for b in self.bookings if b.status == 'CONFIRMED']) if self.bookings else 0,
-            'available_slots': self.capacity - len([b for b in self.bookings if b.status == 'CONFIRMED']) if self.bookings else self.capacity,
+            'class_type': 'General',  # default value since column doesn't exist
+            'difficulty': 'All Levels',  # default value since column doesn't exist
+            'booked_count': len(self.bookings) if self.bookings else 0,
+            'available_slots': self.capacity - len(self.bookings) if self.bookings else self.capacity,
             'trainer': {
                 'id': self.trainer.id,
                 'name': self.trainer.name,
                 'email': self.trainer.email
             } if self.trainer else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+            'updated_at': None  # column doesn't exist
         }
         
         if include_bookings:

@@ -38,15 +38,15 @@ def get_classes(request):
             except ValueError:
                 pass
         
-        # Category/Type filter
-        class_type = request.params.get('type')
-        if class_type:
-            query = query.filter(GymClass.class_type == class_type)
+        # Category/Type filter - DISABLED: column doesn't exist in DB
+        # class_type = request.params.get('type')
+        # if class_type:
+        #     query = query.filter(GymClass.class_type == class_type)
         
-        # Difficulty filter
-        difficulty = request.params.get('difficulty')
-        if difficulty:
-            query = query.filter(GymClass.difficulty == difficulty)
+        # Difficulty filter - DISABLED: column doesn't exist in DB
+        # difficulty = request.params.get('difficulty')
+        # if difficulty:
+        #     query = query.filter(GymClass.difficulty == difficulty)
         
         # Get all classes
         classes = query.order_by(GymClass.schedule).all()
@@ -56,8 +56,7 @@ def get_classes(request):
         for gym_class in classes:
             # Count bookings
             booked_count = db.query(Booking).filter(
-                Booking.class_id == gym_class.id,
-                Booking.status == 'CONFIRMED'
+                Booking.class_id == gym_class.id
             ).count()
             
             classes_data.append({
@@ -65,12 +64,12 @@ def get_classes(request):
                 'name': gym_class.name,
                 'description': gym_class.description,
                 'schedule': gym_class.schedule.isoformat() if gym_class.schedule else None,
-                'duration': gym_class.duration,
+                'duration': 60,  # default value since column doesn't exist
                 'capacity': gym_class.capacity,
                 'booked_count': booked_count,
                 'available_slots': gym_class.capacity - booked_count,
-                'class_type': gym_class.class_type if hasattr(gym_class, 'class_type') else 'General',
-                'difficulty': gym_class.difficulty if hasattr(gym_class, 'difficulty') else 'Intermediate',
+                'class_type': 'General',  # default value since column doesn't exist
+                'difficulty': 'Intermediate',  # default value since column doesn't exist
                 'trainer': {
                     'id': gym_class.trainer.id,
                     'name': gym_class.trainer.name,
