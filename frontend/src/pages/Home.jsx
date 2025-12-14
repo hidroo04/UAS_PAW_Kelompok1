@@ -1,13 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaCalendarAlt, FaUserTie, FaChartLine, FaDumbbell, FaFire, FaHeartbeat, FaUsers, FaTrophy } from "react-icons/fa";
 import "./Home.css";
 
+// Background images for hero slideshow
+const heroImages = [
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80",
+  "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=1920&q=80",
+  "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=1920&q=80"
+];
+
 const Home = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Auto-rotate background images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="home-page">
-      {/* Hero Section */}
+      {/* Hero Section with Slideshow */}
       <section className="hero">
+        {/* Background Images */}
+        {heroImages.map((image, index) => (
+          <div
+            key={index}
+            className={`hero-bg ${index === currentImageIndex ? 'active' : ''}`}
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        ))}
         <div className="hero-overlay"></div>
         <div className="hero-content container" data-aos="fade-up">
           <h1 className="hero-title">Transform Your Body, <span className="highlight">Elevate Your Mind</span></h1>
@@ -22,6 +50,18 @@ const Home = () => {
             <Link to="/register" className="btn btn-outline btn-large">
               <FaDumbbell /> Join Now
             </Link>
+          </div>
+          
+          {/* Slideshow Indicators */}
+          <div className="hero-indicators">
+            {heroImages.map((_, index) => (
+              <button
+                key={index}
+                className={`indicator ${index === currentImageIndex ? 'active' : ''}`}
+                onClick={() => setCurrentImageIndex(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
       </section>

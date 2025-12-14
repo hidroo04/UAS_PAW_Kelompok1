@@ -4,23 +4,56 @@
   background: var(--bg-primary);
 }
 
-/* Hero Section */
+/* Hero Section with Slideshow */
 .hero {
   position: relative;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, var(--bg-primary) 100%),
-    url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920') center/cover;
   color: white;
   padding: 8rem 2rem;
   text-align: center;
-  min-height: 80vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* Background Slideshow */
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  z-index: 0;
+}
+
+.hero-bg.active {
+  opacity: 1;
+}
+
+/* Dark Overlay */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(13, 13, 13, 0.95) 100%
+  );
+  z-index: 1;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -30,6 +63,7 @@
   font-weight: 700;
   margin-bottom: 1.5rem;
   line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .highlight {
@@ -58,6 +92,35 @@
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+/* Slideshow Indicators */
+.hero-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.hero-indicators .indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hero-indicators .indicator:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.hero-indicators .indicator.active {
+  background: var(--accent-color);
+  transform: scale(1.2);
 }
 
 .btn-large {
