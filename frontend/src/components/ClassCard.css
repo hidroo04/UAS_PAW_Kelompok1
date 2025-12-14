@@ -1,0 +1,141 @@
+/* Class Card - Clean Modern */
+.class-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-normal);
+}
+
+.class-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Card Header */
+.class-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.class-card-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.class-instructor {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.capacity-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.75rem;
+}
+
+.capacity-badge.full {
+  background: rgba(248, 113, 113, 0.2);
+  color: var(--error-color);
+}
+
+.capacity-badge.available {
+  background: rgba(74, 222, 128, 0.2);
+  color: var(--success-color);
+}
+
+/* Card Body */
+.class-description {
+  padding: 1rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.class-info {
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.info-item svg {
+  color: var(--accent-color);
+  font-size: 1rem;
+}
+
+/* Card Actions */
+.class-actions {
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-book,
+.btn-view {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-book {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.btn-book:hover {
+  background: var(--accent-dark);
+}
+
+.btn-book:disabled {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.btn-view {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-view:hover {
+  color: white;
+  border-color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .class-card-header,
+  .class-description,
+  .class-info,
+  .class-actions {
+    padding: 1rem;
+  }
+  
+  .class-actions {
+    flex-direction: column;
+  }
+}

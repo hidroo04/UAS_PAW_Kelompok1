@@ -1,0 +1,104 @@
+/* Booking Card - Clean Modern */
+.booking-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-color);
+  transition: all var(--transition-normal);
+}
+
+.booking-card:hover {
+  border-color: var(--accent-color);
+}
+
+/* Booking Header */
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.booking-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* Attendance Badge */
+.attendance-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.attendance-badge.attended {
+  background: rgba(74, 222, 128, 0.2);
+  color: var(--success-color);
+}
+
+.attendance-badge.absent {
+  background: rgba(251, 191, 36, 0.2);
+  color: var(--warning-color);
+}
+
+/* Booking Info */
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.info-label {
+  color: var(--text-secondary);
+}
+
+.info-value {
+  color: white;
+  font-weight: 500;
+}
+
+/* Cancel Button */
+.btn-cancel {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: var(--error-color);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cancel:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--error-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .booking-card {
+    padding: 1rem;
+  }
+  
+  .booking-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

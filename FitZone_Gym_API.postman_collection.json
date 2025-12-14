@@ -1,0 +1,583 @@
+{
+  "info": {
+    "name": "FitZone Gym Booking API",
+    "description": "Complete API collection for testing FitZone Gym Booking System endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345678"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"MEMBER\",\n  \"membership_plan\": \"Premium\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user account. Role can be MEMBER, TRAINER, or ADMIN."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with email and password. Returns JWT token."
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/auth/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Get current authenticated user information."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/auth/logout",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Logout current user."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Classes",
+      "item": [
+        {
+          "name": "Get All Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6543/api/classes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes"]
+            },
+            "description": "Get list of all gym classes."
+          }
+        },
+        {
+          "name": "Get Class by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1"]
+            },
+            "description": "Get details of a specific class by ID."
+          }
+        },
+        {
+          "name": "Create Class (Admin/Trainer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"HIIT Training\",\n  \"description\": \"High Intensity Interval Training\",\n  \"trainer_id\": 1,\n  \"schedule\": \"2025-12-15 10:00:00\",\n  \"duration\": 60,\n  \"max_participants\": 20\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/classes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes"]
+            },
+            "description": "Create a new gym class. Requires ADMIN or TRAINER role."
+          }
+        },
+        {
+          "name": "Update Class (Admin/Trainer)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"HIIT Training - Advanced\",\n  \"description\": \"High Intensity Interval Training for advanced members\",\n  \"duration\": 75\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1"]
+            },
+            "description": "Update an existing class. Requires ADMIN or TRAINER role."
+          }
+        },
+        {
+          "name": "Delete Class (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1"]
+            },
+            "description": "Delete a class. Requires ADMIN role."
+          }
+        },
+        {
+          "name": "Get Class Participants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1/participants",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1", "participants"]
+            },
+            "description": "Get list of participants for a specific class."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Get All Bookings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/bookings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "bookings"]
+            },
+            "description": "Get all bookings. Requires ADMIN role."
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/bookings/my",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "bookings", "my"]
+            },
+            "description": "Get bookings for current authenticated user."
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"class_id\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/bookings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "bookings"]
+            },
+            "description": "Book a class for current user."
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/bookings/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "bookings", "1"]
+            },
+            "description": "Cancel a booking."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Get All Attendance (Admin/Trainer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/attendance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "attendance"]
+            },
+            "description": "Get all attendance records. Requires ADMIN or TRAINER role."
+          }
+        },
+        {
+          "name": "Get My Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/attendance/my",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "attendance", "my"]
+            },
+            "description": "Get attendance records for current user."
+          }
+        },
+        {
+          "name": "Mark Attendance (Trainer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": 1,\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/attendance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "attendance"]
+            },
+            "description": "Mark attendance for a booking. Status can be PRESENT, ABSENT, or LATE. Requires TRAINER role."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Membership",
+      "item": [
+        {
+          "name": "Get Membership Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6543/api/membership/plans",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "membership", "plans"]
+            },
+            "description": "Get available membership plans."
+          }
+        },
+        {
+          "name": "Get My Membership",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/membership/my",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "membership", "my"]
+            },
+            "description": "Get current user's membership information."
+          }
+        },
+        {
+          "name": "Get All Members (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/members",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "members"]
+            },
+            "description": "Get all members. Requires ADMIN role."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews & Ratings",
+      "item": [
+        {
+          "name": "Get Class Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1/reviews",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1", "reviews"]
+            },
+            "description": "Get all reviews for a specific class."
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"class_id\": 1,\n  \"rating\": 4.5,\n  \"comment\": \"Great class! The instructor was very knowledgeable and motivating.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/classes/1/reviews",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "classes", "1", "reviews"]
+            },
+            "description": "Create a review for a class. User must have attended the class. Rating: 1.0-5.0"
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5.0,\n  \"comment\": \"Updated: Absolutely fantastic class! Highly recommend.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6543/api/reviews/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "reviews", "1"]
+            },
+            "description": "Update an existing review. Only the review author can update."
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/reviews/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "reviews", "1"]
+            },
+            "description": "Delete a review. Only the review author can delete."
+          }
+        },
+        {
+          "name": "Get My Reviews",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6543/api/reviews/my",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6543",
+              "path": ["api", "reviews", "my"]
+            },
+            "description": "Get all reviews written by the current user."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
