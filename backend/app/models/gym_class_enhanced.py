@@ -32,7 +32,7 @@ class Difficulty(enum.Enum):
 
 
 class GymClass(Base):
-    __tablename__ = 'gym_classes'
+    __tablename__ = 'classes'
     
     id = Column(Integer, primary_key=True)
     trainer_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)

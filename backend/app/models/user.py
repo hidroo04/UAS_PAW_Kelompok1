@@ -25,7 +25,8 @@ class User(Base):
     
     # Relationships
     member = relationship("Member", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    trainer_classes = relationship("Class", back_populates="trainer", foreign_keys="Class.trainer_id")
+    trainer_classes = relationship("GymClass", back_populates="trainer", foreign_keys="GymClass.trainer_id")
+    reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.name}', email='{self.email}', role='{self.role.value}')>"

@@ -133,35 +133,3 @@ def get_my_attendance(request):
             status=500,
             content_type='application/json'
         )
-
-
-@view_config(route_name='api_class_participants', renderer='json', request_method='GET')
-def get_class_participants(request):
-    """Get participants for a specific class (Trainer only)"""
-    try:
-        class_id = int(request.matchdict['id'])
-        
-        # Mock participants data
-        participants = [
-            {
-                'booking_id': 1,
-                'member_name': 'Jane Member',
-                'membership_plan': 'Premium',
-                'booking_date': '2025-12-12T10:00:00',
-                'attended': True
-            }
-        ]
-        
-        return {
-            'status': 'success',
-            'data': participants,
-            'count': len(participants),
-            'class_id': class_id
-        }
-        
-    except Exception as e:
-        return Response(
-            json.dumps({'status': 'error', 'message': str(e)}),
-            status=500,
-            content_type='application/json'
-        )

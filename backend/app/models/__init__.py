@@ -9,9 +9,10 @@ Base = declarative_base()
 # Import all models
 from .user import User, UserRole
 from .member import Member
-from .gym_class import Class
+from .gym_class_enhanced import GymClass, ClassType, Difficulty
 from .booking import Booking
 from .attendance import Attendance
+from .review import Review
 
 # Export all models
 __all__ = [
@@ -19,9 +20,12 @@ __all__ = [
     'User',
     'UserRole',
     'Member',
-    'Class',
+    'GymClass',
+    'ClassType',
+    'Difficulty',
     'Booking',
     'Attendance',
+    'Review',
     'get_engine',
     'get_session_factory',
     'init_db'

@@ -49,7 +49,7 @@ def register(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'Name, email, and password are required'}),
                 status=400,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         # Get database session
@@ -61,7 +61,7 @@ def register(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'Email already registered'}),
                 status=400,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         # Hash password
@@ -112,7 +112,7 @@ def register(request):
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
@@ -129,7 +129,7 @@ def login(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'Email and password are required'}),
                 status=400,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         # Hash password untuk comparison
@@ -144,7 +144,7 @@ def login(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'Invalid email or password'}),
                 status=401,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         # Prepare user data
@@ -169,7 +169,7 @@ def login(request):
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 
@@ -192,7 +192,7 @@ def get_current_user(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'Invalid authorization header'}),
                 status=401,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         token = auth_header.replace('Bearer ', '')
@@ -208,7 +208,7 @@ def get_current_user(request):
             return Response(
                 json.dumps({'status': 'error', 'message': 'User not found'}),
                 status=404,
-                content_type='application/json'
+                content_type='application/json; charset=utf-8'
             )
         
         # Prepare user data
@@ -228,13 +228,13 @@ def get_current_user(request):
         return Response(
             json.dumps({'status': 'error', 'message': 'Token expired'}),
             status=401,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
     except jwt.InvalidTokenError:
         return Response(
             json.dumps({'status': 'error', 'message': 'Invalid token'}),
             status=401,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
     except Exception as e:
         return Response(

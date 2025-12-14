@@ -12,7 +12,7 @@ class Review(Base):
     __tablename__ = 'reviews'
     
     id = Column(Integer, primary_key=True)
-    class_id = Column(Integer, ForeignKey('gym_classes.id', ondelete='CASCADE'), nullable=False)
+    class_id = Column(Integer, ForeignKey('classes.id', ondelete='CASCADE'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     rating = Column(Float, nullable=False)  # 1.0 to 5.0
     comment = Column(Text)

@@ -15,7 +15,7 @@ class Booking(Base):
     
     # Relationships
     member = relationship("Member", back_populates="bookings")
-    gym_class = relationship("Class", back_populates="bookings")
+    gym_class = relationship("GymClass", back_populates="bookings")
     attendance = relationship("Attendance", back_populates="booking", uselist=False, cascade="all, delete-orphan")
     
     # Ensure one member can only book a class once
