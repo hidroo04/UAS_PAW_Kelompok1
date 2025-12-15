@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaDumbbell, FaBars, FaTimes } from "react-icons/fa";
+import { FaDumbbell, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import "./Navbar.css";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +33,11 @@ const Navbar = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+    setIsAdminDropdownOpen(false);
+  };
+
+  const toggleAdminDropdown = () => {
+    setIsAdminDropdownOpen(!isAdminDropdownOpen);
   };
 
   return (
@@ -60,19 +66,41 @@ const Navbar = () => {
           {user ? (
             <>
               <li>
-                <Link to="/my-bookings" onClick={closeMobileMenu}>My Bookings</Link>
-              </li>
-              <li>
-                <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
-              </li>
-              {user.role === "TRAINER" && (
+              {user.role === "trainer" && (
                 <li>
                   <Link to="/manage-classes" onClick={closeMobileMenu}>Manage</Link>
                 </li>
               )}
-              {user.role === "ADMIN" && (
+              {user.role === "admin" && (
+                <li className="admin-dropdown">
+                  <button 
+                    className="admin-toggle"
+                    onClick={toggleAdminDropdown}
+                  >
+                    Admin Panel <FaChevronDown className={`dropdown-icon ${isAdminDropdownOpen ? 'open' : ''}`} />
+                  </button>
+                  <ul className={`admin-submenu ${isAdminDropdownOpen ? 'show' : ''}`}>
+                    <li>
+                      <Link to="/admin/dashboard" onClick={closeMobileMenu}>📊 Dashboard</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/members" onClick={closeMobileMenu}>👥 Members</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/classes" onClick={closeMobileMenu}>🏋️ Classes</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/bookings" onClick={closeMobileMenu}>📅 Bookings</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/attendance" onClick={closeMobileMenu}>✅ Attendance</Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
+              <li className="navbar-user">
                 <li>
-                  <Link to="/admin" onClick={closeMobileMenu}>Admin</Link>
+                  <Link to="/admin" onClick={closeMobileMenu}>Admin User</Link>
                 </li>
               )}
               <li className="navbar-user">

@@ -142,6 +142,86 @@
   background: var(--accent-dark) !important;
 }
 
+/* Admin Dropdown Menu */
+.admin-dropdown {
+  position: relative;
+}
+
+.admin-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-toggle:hover {
+  color: white;
+  background: var(--bg-hover);
+}
+
+.dropdown-icon {
+  font-size: 0.75rem;
+  transition: transform var(--transition-fast);
+}
+
+.dropdown-icon.open {
+  transform: rotate(180deg);
+}
+
+.admin-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  list-style: none;
+  padding: 0.5rem;
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition-fast);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.admin-submenu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.admin-submenu li {
+  display: block;
+}
+
+.admin-submenu li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-submenu li a:hover {
+  color: white;
+  background: var(--bg-hover);
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .mobile-menu-toggle {
@@ -205,5 +285,22 @@
     display: block !important;
     text-align: center !important;
     width: 100%;
+  }
+  
+  /* Admin Dropdown Mobile */
+  .admin-submenu {
+    position: static;
+    margin-top: 0;
+    margin-left: 1rem;
+    border: none;
+    border-left: 2px solid var(--border-color);
+    box-shadow: none;
+    background: transparent;
+    padding: 0.5rem 0;
+  }
+  
+  .admin-toggle {
+    width: 100%;
+    justify-content: space-between;
   }
 }
