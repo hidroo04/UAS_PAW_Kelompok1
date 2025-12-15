@@ -11,6 +11,11 @@ import Classes from "./pages/Classes";
 import MyBookings from "./pages/MyBookings";
 import UserProfile from "./pages/UserProfile";
 import MembershipPlans from "./pages/MembershipPlans";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminMembers from "./pages/admin/AdminMembers";
+import AdminClasses from "./pages/admin/AdminClasses";
+import AdminBookings from "./pages/admin/AdminBookings";
+import AdminAttendance from "./pages/admin/AdminAttendance";
 import "./App.css";
 
 function App() {
@@ -37,6 +42,14 @@ function App() {
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/membership" element={<MembershipPlans />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/members" element={<AdminMembers />} />
+            <Route path="/admin/classes" element={<AdminClasses />} />
+            <Route path="/admin/bookings" element={<AdminBookings />} />
+            <Route path="/admin/attendance" element={<AdminAttendance />} />
           </Routes>
         </main>
         <Footer />

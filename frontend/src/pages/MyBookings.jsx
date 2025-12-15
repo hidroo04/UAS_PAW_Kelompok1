@@ -23,10 +23,13 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       const response = await apiClient.get("/bookings/my");
+      console.log("My Bookings Response:", response.data);
       if (response.data.status === "success") {
         setBookings(response.data.data);
       }
     } catch (err) {
+      console.error("Error fetching bookings:", err);
+      console.error("Error response:", err.response);
       setError("Failed to load bookings");
     } finally {
       setLoading(false);

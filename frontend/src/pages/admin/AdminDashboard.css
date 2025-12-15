@@ -1,0 +1,398 @@
+/* Admin Dashboard */
+.admin-dashboard {
+  width: 100%;
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.admin-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: #6c757d;
+}
+
+/* Statistics Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: white;
+}
+
+.stat-card.primary .stat-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card.success .stat-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card.warning .stat-icon {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.stat-card.info .stat-icon {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.stat-info h3 {
+  font-size: 2rem;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+  font-weight: 700;
+}
+
+.stat-info p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.stat-detail {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #00d9ff;
+  font-weight: 600;
+}
+
+/* Membership Distribution */
+.membership-distribution {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.membership-distribution h2 {
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.membership-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.membership-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.membership-card:hover {
+  transform: scale(1.05);
+}
+
+.membership-card.basic {
+  background: linear-gradient(135deg, #6B7280, #9CA3AF);
+}
+
+.membership-card.premium {
+  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+}
+
+.membership-card.vip {
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+}
+
+.membership-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.membership-card h3 {
+  font-size: 2.5rem;
+  margin: 0.5rem 0;
+  font-weight: 700;
+}
+
+.membership-card p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.membership-percentage {
+  font-size: 1.2rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.content-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.content-section h2 {
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* Recent Bookings */
+.recent-bookings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.booking-item:hover {
+  background: #e9ecef;
+}
+
+.booking-info h4 {
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.booking-info p {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0 0 0.25rem 0;
+}
+
+.booking-date {
+  font-size: 0.8rem;
+  color: #00d9ff;
+}
+
+.booking-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.booking-status.confirmed {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.booking-status.pending {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.booking-status.cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Popular Classes */
+.popular-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.class-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.class-item:hover {
+  background: #e9ecef;
+}
+
+.class-rank {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.class-info {
+  flex: 1;
+}
+
+.class-info h4 {
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.class-info p {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.class-bookings {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #F59E0B;
+  font-weight: 600;
+}
+
+.class-bookings svg {
+  font-size: 1.2rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.quick-actions h2 {
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.action-btn svg {
+  font-size: 2rem;
+}
+
+.no-data {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+}
