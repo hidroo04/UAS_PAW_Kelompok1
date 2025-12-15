@@ -29,9 +29,9 @@ const AdminAttendance = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('userRole');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     
-    if (!token || userRole !== 'admin') {
+    if (!token || user.role !== 'admin') {
       navigate('/login');
       return;
     }

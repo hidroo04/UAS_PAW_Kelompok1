@@ -24,6 +24,7 @@ const Login = () => {
       if (response.data.status === "success") {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("userRole", response.data.data.role);
         navigate("/");
         window.location.reload();
       }

@@ -22,6 +22,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userRole");
     setUser(null);
     navigate("/login");
     setIsMobileMenuOpen(false);
@@ -66,6 +67,11 @@ const Navbar = () => {
           {user ? (
             <>
               <li>
+                <Link to="/my-bookings" onClick={closeMobileMenu}>My Bookings</Link>
+              </li>
+              <li>
+                <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
+              </li>
               {user.role === "trainer" && (
                 <li>
                   <Link to="/manage-classes" onClick={closeMobileMenu}>Manage</Link>
@@ -96,11 +102,6 @@ const Navbar = () => {
                       <Link to="/admin/attendance" onClick={closeMobileMenu}>✅ Attendance</Link>
                     </li>
                   </ul>
-                </li>
-              )}
-              <li className="navbar-user">
-                <li>
-                  <Link to="/admin" onClick={closeMobileMenu}>Admin User</Link>
                 </li>
               )}
               <li className="navbar-user">
