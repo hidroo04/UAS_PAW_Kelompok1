@@ -104,7 +104,7 @@ const Navbar = () => {
                       </li>
                       <li>
                         <Link to="/admin/bookings" onClick={closeMobileMenu}>
-                          <HiCalendar /> Bookings
+                          <HiCalendar /> All Bookings
                         </Link>
                       </li>
                       <li>
@@ -113,6 +113,9 @@ const Navbar = () => {
                         </Link>
                       </li>
                     </ul>
+                  </li>
+                  <li>
+                    <Link to="/my-bookings" onClick={closeMobileMenu}>My Bookings</Link>
                   </li>
                   <li>
                     <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>

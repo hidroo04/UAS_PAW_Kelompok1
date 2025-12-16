@@ -9,28 +9,16 @@ from datetime import datetime, timedelta, date
 import jwt
 from sqlalchemy.orm import Session
 from ..models import User, Member, UserRole
+from ..config import config
+from ..utils.auth import create_jwt_token as create_token_util, hash_password
 
-# Secret key untuk JWT (dalam production, gunakan environment variable)
-JWT_SECRET = "your-secret-key-change-this-in-production"
-JWT_ALGORITHM = "HS256"
-JWT_EXP_DELTA_SECONDS = 3600  # 1 hour
+# Use config from utils/auth for consistency
+JWT_SECRET = config.JWT_SECRET_KEY
+JWT_ALGORITHM = config.JWT_ALGORITHM
+JWT_EXP_DELTA_SECONDS = config.JWT_EXPIRATION_HOURS * 3600
 
-
-def hash_password(password):
-    """Hash password menggunakan SHA256"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
-def create_jwt_token(user_id, email, role):
-    """Create JWT token for authenticated user"""
-    payload = {
-        'user_id': user_id,
-        'email': email,
-        'role': role,
-        'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
-    }
-    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    return token
+# Use the unified create_jwt_token from utils
+create_jwt_token = create_token_util
 
 
 @view_config(route_name='auth_register', renderer='json', request_method='POST')

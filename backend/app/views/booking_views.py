@@ -158,6 +158,7 @@ def create_booking(request):
         
         db.add(new_booking)
         db.flush()  # Get the ID
+        db.commit()  # Save to database
         
         # Load relationships for response
         db.refresh(new_booking)
@@ -296,6 +297,7 @@ def cancel_booking(request):
         
         # Delete booking
         db.delete(booking)
+        db.commit()
         
         return {
             'status': 'success',

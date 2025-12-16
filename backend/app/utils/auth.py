@@ -94,9 +94,19 @@ def get_token_from_header(request) -> str:
     Returns:
         JWT token string or None
     """
-    auth_header = request.headers.get('Authorization', '')
-    if auth_header.startswith('Bearer '):
-        return auth_header.split(' ')[1]
+    # Pyramid/WebOb uses environ for HTTP headers
+    # HTTP_AUTHORIZATION is the CGI-style header name
+    auth_header = request.environ.get('HTTP_AUTHORIZATION', '')
+    
+    if not auth_header:
+        # Fallback to request.headers
+        auth_header = request.headers.get('Authorization', '')
+    
+    if auth_header.startswith('Bearer ') or auth_header.startswith('bearer '):
+        parts = auth_header.split(' ', 1)
+        if len(parts) == 2:
+            return parts[1]
+    
     return None
 
 
