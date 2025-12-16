@@ -18,17 +18,29 @@ const Login = () => {
     setError("");
     setLoading(true);
 
+    console.log("Login attempt with:", formData);
+
     try {
       const response = await apiClient.post("/auth/login", formData);
+      console.log("Login response:", response.data);
 
       if (response.data.status === "success") {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.data));
         localStorage.setItem("userRole", response.data.data.role);
-        navigate("/");
+        console.log("Login successful, redirecting...");
+        
+        // Redirect based on role
+        if (response.data.data.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
         window.location.reload();
       }
     } catch (err) {
+      console.error("Login error:", err);
+      console.error("Error response:", err.response);
       setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);

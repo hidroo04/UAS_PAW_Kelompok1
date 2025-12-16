@@ -5,6 +5,8 @@ from pyramid.view import view_config
 from pyramid.response import Response
 import json
 from datetime import datetime, timedelta
+from ..models import Member, User
+from sqlalchemy.orm import joinedload
 
 
 # Mock membership plans
@@ -104,16 +106,32 @@ def get_my_membership(request):
 def get_members(request):
     """Get all members (Admin only)"""
     try:
+        db = request.dbsession
+        members = db.query(Member).options(joinedload(Member.user)).all()
+        
+        members_data = []
+        for member in members:
+            member_data = {
+                'id': member.id,
+                'user_id': member.user_id,
+                'name': member.user.name if member.user else 'Unknown',
+                'email': member.user.email if member.user else 'Unknown',
+                'membership_plan': member.membership_plan,
+                'expiry_date': member.expiry_date.strftime('%Y-%m-%d') if member.expiry_date else None,
+                'is_active': member.is_active()
+            }
+            members_data.append(member_data)
+        
         return {
             'status': 'success',
-            'data': mock_members,
-            'count': len(mock_members)
+            'data': members_data,
+            'count': len(members_data)
         }
     except Exception as e:
         return Response(
             json.dumps({'status': 'error', 'message': str(e)}),
             status=500,
-            content_type='application/json'
+            content_type='application/json; charset=utf-8'
         )
 
 

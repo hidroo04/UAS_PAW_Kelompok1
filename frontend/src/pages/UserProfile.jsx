@@ -1,5 +1,19 @@
 import { useState, useEffect } from 'react';
-import { FaUser, FaCreditCard, FaCalendarAlt, FaChartLine, FaEdit, FaSignOutAlt } from 'react-icons/fa';
+import { 
+  HiUser, 
+  HiCreditCard, 
+  HiCalendar, 
+  HiChartBar, 
+  HiPencil, 
+  HiLogout,
+  HiCheckCircle,
+  HiClock,
+  HiAcademicCap,
+  HiUsers,
+  HiClipboardCheck
+} from 'react-icons/hi';
+import { RiMedalFill, RiUserStarFill, RiVipCrownFill } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/api';
 import './UserProfile.css';
 
@@ -120,13 +134,21 @@ const UserProfile = () => {
           </div>
           <div className="detail-row">
             <label>Role</label>
-            <span className="role-badge">{userData?.role}</span>
+            <span className={`role-badge role-${userData?.role}`}>
+              {userData?.role === 'admin' && <HiUsers />}
+              {userData?.role === 'trainer' && <HiAcademicCap />}
+              {userData?.role === 'member' && <HiUser />}
+              {userData?.role}
+            </span>
           </div>
           {userData?.membership_plan && (
             <>
               <div className="detail-row">
                 <label>Membership Plan</label>
                 <span className={`membership-badge ${userData.membership_plan.toLowerCase()}`}>
+                  {userData.membership_plan === 'Basic' && <RiMedalFill />}
+                  {userData.membership_plan === 'Premium' && <RiUserStarFill />}
+                  {userData.membership_plan === 'VIP' && <RiVipCrownFill />}
                   {userData.membership_plan}
                 </span>
               </div>
@@ -145,7 +167,7 @@ const UserProfile = () => {
             </>
           )}
           <button className="btn-edit" onClick={() => setEditMode(true)}>
-            <FaEdit /> Edit Profile
+            <HiPencil /> Edit Profile
           </button>
         </div>
       ) : (
@@ -199,7 +221,7 @@ const UserProfile = () => {
               <div className="booking-info">
                 <h4>{booking.class_name}</h4>
                 <p className="booking-date">
-                  <FaCalendarAlt /> {new Date(booking.class_date).toLocaleDateString()} at {booking.class_time}
+                  <HiCalendar /> {new Date(booking.class_date).toLocaleDateString()} at {booking.class_time}
                 </p>
                 <span className={`booking-status status-${booking.status}`}>
                   {booking.status}
@@ -217,14 +239,14 @@ const UserProfile = () => {
       <h3>Attendance History</h3>
       <div className="attendance-stats">
         <div className="stat-card">
-          <FaChartLine />
+          <HiChartBar />
           <div>
             <h4>{attendance.length}</h4>
             <p>Total Classes Attended</p>
           </div>
         </div>
         <div className="stat-card">
-          <FaCalendarAlt />
+          <HiCheckCircle />
           <div>
             <h4>{attendance.filter(a => a.status === 'present').length}</h4>
             <p>Present</p>
@@ -257,7 +279,7 @@ const UserProfile = () => {
       {membership ? (
         <div className="membership-card">
           <div className="membership-header">
-            <FaCreditCard size={40} />
+            <HiCreditCard size={40} />
             <h4>{membership.plan_name}</h4>
           </div>
           <div className="membership-details">
@@ -311,28 +333,28 @@ const UserProfile = () => {
               className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
-              <FaUser /> Profile
+              <HiUser /> Profile
             </button>
             <button
               className={`tab-button ${activeTab === 'bookings' ? 'active' : ''}`}
               onClick={() => setActiveTab('bookings')}
             >
-              <FaCalendarAlt /> Bookings
+              <HiCalendar /> Bookings
             </button>
             <button
               className={`tab-button ${activeTab === 'attendance' ? 'active' : ''}`}
               onClick={() => setActiveTab('attendance')}
             >
-              <FaChartLine /> Attendance
+              <HiChartBar /> Attendance
             </button>
             <button
               className={`tab-button ${activeTab === 'membership' ? 'active' : ''}`}
               onClick={() => setActiveTab('membership')}
             >
-              <FaCreditCard /> Membership
+              <HiCreditCard /> Membership
             </button>
             <button className="tab-button logout" onClick={handleLogout}>
-              <FaSignOutAlt /> Logout
+              <HiLogout /> Logout
             </button>
           </nav>
         </div>

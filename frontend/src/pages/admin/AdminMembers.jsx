@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaSearch, 
-  FaEdit, 
-  FaTrash, 
-  FaCrown,
-  FaStar,
-  FaUserPlus,
-  FaFilter,
-  FaCheckCircle,
-  FaTimesCircle 
-} from 'react-icons/fa';
+  HiSearch, 
+  HiPencil, 
+  HiTrash, 
+  HiUserAdd,
+  HiFilter,
+  HiCheckCircle,
+  HiXCircle,
+  HiUsers
+} from 'react-icons/hi';
+import { RiMedalFill, RiUserStarFill, RiVipCrownFill } from 'react-icons/ri';
 import apiClient from '../../services/api';
 import './AdminMembers.css';
 
@@ -136,9 +136,9 @@ const AdminMembers = () => {
 
   const getMembershipBadge = (plan) => {
     const badges = {
-      'Basic': { icon: '💼', class: 'basic' },
-      'Premium': { icon: '⭐', class: 'premium' },
-      'VIP': { icon: '👑', class: 'vip' }
+      'Basic': { icon: <RiMedalFill />, class: 'basic' },
+      'Premium': { icon: <RiUserStarFill />, class: 'premium' },
+      'VIP': { icon: <RiVipCrownFill />, class: 'vip' }
     };
     return badges[plan] || badges['Basic'];
   };
@@ -156,14 +156,14 @@ const AdminMembers = () => {
           setFormData({ name: '', email: '', membership_plan: 'Basic', expiry_date: '' });
           setShowModal(true);
         }}>
-          <FaUserPlus /> Add New Member
+          <HiUserAdd /> Add New Member
         </button>
       </div>
 
       {/* Filters */}
       <div className="members-filters">
         <div className="search-box">
-          <FaSearch />
+          <HiSearch />
           <input
             type="text"
             placeholder="Search members by name or email..."
@@ -183,19 +183,19 @@ const AdminMembers = () => {
             className={filterType === 'Basic' ? 'active basic' : ''}
             onClick={() => setFilterType('Basic')}
           >
-            💼 Basic
+            <RiMedalFill /> Basic
           </button>
           <button 
             className={filterType === 'Premium' ? 'active premium' : ''}
             onClick={() => setFilterType('Premium')}
           >
-            ⭐ Premium
+            <RiUserStarFill /> Premium
           </button>
           <button 
             className={filterType === 'VIP' ? 'active vip' : ''}
             onClick={() => setFilterType('VIP')}
           >
-            👑 VIP
+            <RiVipCrownFill /> VIP
           </button>
         </div>
       </div>
@@ -235,7 +235,7 @@ const AdminMembers = () => {
                     </td>
                     <td>
                       <span className={`status-badge ${member.is_active ? 'active' : 'inactive'}`}>
-                        {member.is_active ? <><FaCheckCircle /> Active</> : <><FaTimesCircle /> Inactive</>}
+                        {member.is_active ? <><HiCheckCircle /> Active</> : <><HiXCircle /> Inactive</>}
                       </span>
                     </td>
                     <td>{new Date(member.created_at || Date.now()).toLocaleDateString()}</td>
@@ -245,14 +245,14 @@ const AdminMembers = () => {
                         onClick={() => handleEdit(member)}
                         title="Edit member"
                       >
-                        <FaEdit />
+                        <HiPencil />
                       </button>
                       <button 
                         className="btn-delete-small"
                         onClick={() => handleDelete(member.id)}
                         title="Delete member"
                       >
-                        <FaTrash />
+                        <HiTrash />
                       </button>
                     </td>
                   </tr>

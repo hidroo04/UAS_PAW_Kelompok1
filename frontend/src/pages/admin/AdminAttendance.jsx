@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaCalendarAlt, 
-  FaUserCheck,
-  FaUserTimes,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaDumbbell
-} from 'react-icons/fa';
+  HiCalendar, 
+  HiUserAdd,
+  HiUserRemove,
+  HiCheckCircle,
+  HiXCircle,
+  HiAcademicCap,
+  HiClipboardCheck
+} from 'react-icons/hi';
 import apiClient from '../../services/api';
 import './AdminAttendance.css';
 
@@ -131,7 +132,7 @@ const AdminAttendance = () => {
             setShowMarkModal(true);
           }}
         >
-          <FaUserCheck /> Mark Attendance
+          <HiUserAdd /> Mark Attendance
         </button>
       </div>
 
@@ -139,7 +140,7 @@ const AdminAttendance = () => {
       <div className="attendance-stats">
         <div className="stat-card total">
           <div className="stat-icon">
-            <FaCalendarAlt />
+            <HiClipboardCheck />
           </div>
           <div className="stat-info">
             <h3>{stats.total}</h3>
@@ -149,7 +150,7 @@ const AdminAttendance = () => {
 
         <div className="stat-card present">
           <div className="stat-icon">
-            <FaUserCheck />
+            <HiUserAdd />
           </div>
           <div className="stat-info">
             <h3>{stats.present}</h3>
@@ -159,7 +160,7 @@ const AdminAttendance = () => {
 
         <div className="stat-card absent">
           <div className="stat-icon">
-            <FaUserTimes />
+            <HiUserRemove />
           </div>
           <div className="stat-info">
             <h3>{stats.absent}</h3>
@@ -169,7 +170,7 @@ const AdminAttendance = () => {
 
         <div className="stat-card rate">
           <div className="stat-icon">
-            <FaCheckCircle />
+            <HiCheckCircle />
           </div>
           <div className="stat-info">
             <h3>{stats.rate}%</h3>
@@ -233,22 +234,22 @@ const AdminAttendance = () => {
                   <td>{getMemberName(record.member_id)}</td>
                   <td>
                     <div className="class-cell">
-                      <FaDumbbell />
+                      <HiAcademicCap />
                       <span>{getClassName(record.class_id)}</span>
                     </div>
                   </td>
                   <td>
                     <div className="date-cell">
-                      <FaCalendarAlt />
+                      <HiCalendar />
                       <span>{new Date(record.date).toLocaleDateString()}</span>
                     </div>
                   </td>
                   <td>
                     <span className={`status-badge ${record.status}`}>
                       {record.status === 'present' ? (
-                        <><FaCheckCircle /> Present</>
+                        <><HiCheckCircle /> Present</>
                       ) : (
-                        <><FaTimesCircle /> Absent</>
+                        <><HiXCircle /> Absent</>
                       )}
                     </span>
                   </td>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaSearch, 
-  FaCalendarAlt, 
-  FaCheckCircle,
-  FaTimesCircle,
-  FaClock,
-  FaFilter
-} from 'react-icons/fa';
+  HiSearch, 
+  HiCalendar, 
+  HiCheckCircle,
+  HiXCircle,
+  HiClock,
+  HiFilter,
+  HiClipboardCheck
+} from 'react-icons/hi';
 import apiClient from '../../services/api';
 import './AdminBookings.css';
 
@@ -109,9 +110,9 @@ const AdminBookings = () => {
   const getStatusBadge = (status) => {
     const statusLower = (status || 'confirmed').toLowerCase();
     const badges = {
-      confirmed: { class: 'confirmed', icon: <FaCheckCircle />, text: 'Confirmed' },
-      pending: { class: 'pending', icon: <FaClock />, text: 'Pending' },
-      cancelled: { class: 'cancelled', icon: <FaTimesCircle />, text: 'Cancelled' }
+      confirmed: { class: 'confirmed', icon: <HiCheckCircle />, text: 'Confirmed' },
+      pending: { class: 'pending', icon: <HiClock />, text: 'Pending' },
+      cancelled: { class: 'cancelled', icon: <HiXCircle />, text: 'Cancelled' }
     };
     return badges[statusLower] || badges.confirmed;
   };
@@ -137,7 +138,7 @@ const AdminBookings = () => {
       <div className="booking-stats">
         <div className="stat-box total">
           <div className="stat-icon">
-            <FaCalendarAlt />
+            <HiClipboardCheck />
           </div>
           <div className="stat-info">
             <h3>{stats.total}</h3>
@@ -147,7 +148,7 @@ const AdminBookings = () => {
 
         <div className="stat-box confirmed">
           <div className="stat-icon">
-            <FaCheckCircle />
+            <HiCheckCircle />
           </div>
           <div className="stat-info">
             <h3>{stats.confirmed}</h3>
@@ -157,7 +158,7 @@ const AdminBookings = () => {
 
         <div className="stat-box pending">
           <div className="stat-icon">
-            <FaClock />
+            <HiClock />
           </div>
           <div className="stat-info">
             <h3>{stats.pending}</h3>
@@ -167,7 +168,7 @@ const AdminBookings = () => {
 
         <div className="stat-box cancelled">
           <div className="stat-icon">
-            <FaTimesCircle />
+            <HiXCircle />
           </div>
           <div className="stat-info">
             <h3>{stats.cancelled}</h3>
@@ -179,7 +180,7 @@ const AdminBookings = () => {
       {/* Filters */}
       <div className="bookings-filters">
         <div className="search-box">
-          <FaSearch />
+          <HiSearch />
           <input
             type="text"
             placeholder="Search by class or member name..."
@@ -240,7 +241,7 @@ const AdminBookings = () => {
                     <td>{getClassName(booking.class_id)}</td>
                     <td>
                       <div className="booking-date">
-                        <FaCalendarAlt />
+                        <HiCalendar />
                         <span>{new Date(booking.booking_date || Date.now()).toLocaleDateString()}</span>
                       </div>
                     </td>

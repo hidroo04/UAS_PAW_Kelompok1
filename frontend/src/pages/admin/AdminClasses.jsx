@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaSearch, 
-  FaEdit, 
-  FaTrash, 
-  FaPlus,
-  FaDumbbell,
-  FaClock,
-  FaUsers,
-  FaUserTie
-} from 'react-icons/fa';
+  HiSearch, 
+  HiPencil, 
+  HiTrash, 
+  HiPlus,
+  HiAcademicCap,
+  HiClock,
+  HiUsers,
+  HiUserGroup
+} from 'react-icons/hi';
 import apiClient from '../../services/api';
 import './AdminClasses.css';
 
@@ -149,14 +149,14 @@ const AdminClasses = () => {
           setFormData({ name: '', schedule: '', trainer_id: '', capacity: 20 });
           setShowModal(true);
         }}>
-          <FaPlus /> Add New Class
+          <HiPlus /> Add New Class
         </button>
       </div>
 
       {/* Search */}
       <div className="classes-search">
         <div className="search-box">
-          <FaSearch />
+          <HiSearch />
           <input
             type="text"
             placeholder="Search classes by name or schedule..."
@@ -166,7 +166,7 @@ const AdminClasses = () => {
         </div>
         <div className="class-stats">
           <div className="stat">
-            <FaDumbbell />
+            <HiAcademicCap />
             <span>{classes.length} Total Classes</span>
           </div>
         </div>
@@ -179,7 +179,7 @@ const AdminClasses = () => {
             <div key={cls.id} className="class-card">
               <div className="class-card-header">
                 <div className="class-icon">
-                  <FaDumbbell />
+                  <HiAcademicCap />
                 </div>
                 <div className="class-actions">
                   <button 
@@ -187,14 +187,14 @@ const AdminClasses = () => {
                     onClick={() => handleEdit(cls)}
                     title="Edit class"
                   >
-                    <FaEdit />
+                    <HiPencil />
                   </button>
                   <button 
                     className="btn-delete-icon"
                     onClick={() => handleDelete(cls.id)}
                     title="Delete class"
                   >
-                    <FaTrash />
+                    <HiTrash />
                   </button>
                 </div>
               </div>
@@ -203,17 +203,17 @@ const AdminClasses = () => {
                 <h3>{cls.name}</h3>
                 
                 <div className="class-info-row">
-                  <FaClock />
+                  <HiClock />
                   <span>{cls.schedule}</span>
                 </div>
 
                 <div className="class-info-row">
-                  <FaUserTie />
+                  <HiUserGroup />
                   <span>{getTrainerName(cls.trainer_id)}</span>
                 </div>
 
                 <div className="class-info-row">
-                  <FaUsers />
+                  <HiUsers />
                   <span>Capacity: {cls.capacity || 20}</span>
                 </div>
               </div>

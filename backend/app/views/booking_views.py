@@ -8,10 +8,21 @@ import json
 from datetime import datetime
 from ..models import Booking, GymClass, User, Member
 from sqlalchemy.orm import joinedload
+from ..utils.auth import get_token_from_header, decode_jwt_token
+import jwt
 
 
-from ..models import Booking, GymClass, User, Member
-from sqlalchemy.orm import joinedload
+def get_authenticated_user_id(request):
+    """Extract user_id from JWT token"""
+    token = get_token_from_header(request)
+    if not token:
+        return None
+    
+    try:
+        payload = decode_jwt_token(token)
+        return payload.get('user_id')
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return None
 
 
 @view_config(route_name='api_bookings', renderer='json', request_method='GET')
@@ -87,8 +98,14 @@ def create_booking(request):
         
         class_id = data['class_id']
         
-        # Get user_id from token (mock: use member@gym.com = user_id 3)
-        user_id = 3  # In real app, extract from JWT token
+        # Get user_id from token
+        user_id = get_authenticated_user_id(request)
+        if not user_id:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Authentication required'}),
+                status=401,
+                content_type='application/json; charset=utf-8'
+            )
         
         # Find member by user_id
         member = db.query(Member).filter(Member.user_id == user_id).first()
@@ -244,8 +261,14 @@ def cancel_booking(request):
         db = request.dbsession
         booking_id = int(request.matchdict['id'])
         
-        # Get user_id from token (mock: use member@gym.com = user_id 3)
-        user_id = 3  # In real app, extract from JWT token
+        # Get user_id from token
+        user_id = get_authenticated_user_id(request)
+        if not user_id:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Authentication required'}),
+                status=401,
+                content_type='application/json; charset=utf-8'
+            )
         
         # Find member
         member = db.query(Member).filter(Member.user_id == user_id).first()
@@ -295,8 +318,14 @@ def get_my_bookings(request):
     try:
         db = request.dbsession
         
-        # Get user_id from token (mock: use member@gym.com = user_id 3)
-        user_id = 3  # In real app, extract from JWT token
+        # Get user_id from token
+        user_id = get_authenticated_user_id(request)
+        if not user_id:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Authentication required'}),
+                status=401,
+                content_type='application/json; charset=utf-8'
+            )
         
         # Find member by user_id
         member = db.query(Member).filter(Member.user_id == user_id).first()

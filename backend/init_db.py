@@ -3,7 +3,7 @@ Database initialization script
 Run this script to create all tables in PostgreSQL database
 """
 from sqlalchemy import create_engine
-from app.models import Base, User, UserRole, Member, Class, Booking, Attendance
+from app.models import Base, User, UserRole, Member, GymClass, Booking, Attendance
 from datetime import datetime, timedelta
 import hashlib
 
@@ -75,21 +75,21 @@ def seed_sample_data(db_url):
         
         # Create sample classes
         classes = [
-            Class(
+            GymClass(
                 trainer_id=trainer.id,
                 name="Yoga Morning",
                 description="Relaxing yoga session to start your day",
                 schedule=datetime.now() + timedelta(days=1, hours=7),
                 capacity=20
             ),
-            Class(
+            GymClass(
                 trainer_id=trainer.id,
                 name="HIIT Workout",
                 description="High intensity interval training",
                 schedule=datetime.now() + timedelta(days=1, hours=18),
                 capacity=15
             ),
-            Class(
+            GymClass(
                 trainer_id=trainer.id,
                 name="Strength Training",
                 description="Build muscle and strength",
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     import sys
     
     # Database URL - update with your PostgreSQL credentials
-    DB_URL = "postgresql://postgres:ripaldy@localhost/gym_booking_db"
+    DB_URL = "postgresql://postgres:123140197@localhost/gym_booking_db"
     
     if len(sys.argv) > 1:
         DB_URL = sys.argv[1]
