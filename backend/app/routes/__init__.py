@@ -12,6 +12,8 @@ def include_routes(config):
     from . import attendance_routes
     from . import membership_routes
     from . import review_routes
+    from . import trainer_routes
+    from . import user_routes
     
     # Include each route module
     auth_routes.includeme(config)
@@ -20,3 +22,5 @@ def include_routes(config):
     attendance_routes.includeme(config)
     membership_routes.includeme(config)
     review_routes.includeme(config)
+    trainer_routes.includeme(config)
+    user_routes.includeme(config)

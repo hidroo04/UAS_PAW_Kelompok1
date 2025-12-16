@@ -61,7 +61,7 @@ const Navbar = () => {
         </button>
 
         <ul className={`navbar-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {(!user || user.role !== "admin") && (
+          {(!user || (user && user.role === "member")) && (
             <>
               <li>
                 <Link to="/" onClick={closeMobileMenu}>Home</Link>
@@ -121,6 +121,21 @@ const Navbar = () => {
                     <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
                   </li>
                 </>
+              ) : user.role === "trainer" ? (
+                <>
+                  <li>
+                    <Link to="/trainer/my-classes" onClick={closeMobileMenu}>My Classes</Link>
+                  </li>
+                  <li>
+                    <Link to="/trainer/manage-classes" onClick={closeMobileMenu}>Manage Classes</Link>
+                  </li>
+                  <li>
+                    <Link to="/trainer/calendar" onClick={closeMobileMenu}>Calendar</Link>
+                  </li>
+                  <li>
+                    <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
+                  </li>
+                </>
               ) : (
                 <>
                   <li>
@@ -129,11 +144,6 @@ const Navbar = () => {
                   <li>
                     <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
                   </li>
-                  {user.role === "trainer" && (
-                    <li>
-                      <Link to="/manage-classes" onClick={closeMobileMenu}>Manage</Link>
-                    </li>
-                  )}
                 </>
               )}
               <li className="navbar-user">

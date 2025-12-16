@@ -1,0 +1,503 @@
+/* Class Detail - Dark Theme */
+.class-detail-container {
+  min-height: calc(100vh - 80px);
+  background: var(--bg-primary, #0d0d0d);
+  padding: 2rem;
+}
+
+/* Header */
+.btn-back {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-color, #ff6b35);
+  color: var(--accent-color, #ff6b35);
+}
+
+.class-detail-header {
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+}
+
+.header-content {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.class-badge {
+  display: inline-block;
+  background: var(--accent-color, #ff6b35);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.header-content h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: white;
+  margin-bottom: 0.75rem;
+  letter-spacing: -1px;
+}
+
+.class-description-header {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Info Cards Grid */
+.class-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+}
+
+.info-card {
+  background: var(--bg-card, #1a1a1a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  border-color: var(--accent-color, #ff6b35);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.info-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 107, 53, 0.1) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--accent-color, #ff6b35);
+  flex-shrink: 0;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  color: white;
+  font-weight: 600;
+}
+
+.info-value.available {
+  color: #4cd964;
+}
+
+.info-value.full {
+  color: #ff6b6b;
+}
+
+/* Members Section */
+.members-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--bg-secondary, #1a1a1a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 700;
+}
+
+/* Members Table */
+.members-table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card, #0d0d0d);
+}
+
+.members-table thead {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 107, 53, 0.1) 100%);
+  border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+}
+
+.members-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.members-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.members-table tbody tr:hover {
+  background: rgba(255, 107, 53, 0.05);
+}
+
+.members-table td {
+  padding: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.member-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.member-avatar-small {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-color, #ff6b35) 0%, #ff8c42 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.member-avatar-small.present {
+  background: linear-gradient(135deg, #4cd964 0%, #5de278 100%);
+  box-shadow: 0 0 15px rgba(76, 217, 100, 0.3);
+}
+
+.member-avatar-small.absent {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+}
+
+.attendance-indicator-small {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 900;
+  border: 2px solid var(--bg-card, #0d0d0d);
+}
+
+.email-cell {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.date-cell {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.membership-badge {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.membership-badge.basic {
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.membership-badge.premium {
+  background: rgba(240, 147, 251, 0.2);
+  color: #f093fb;
+  border: 1px solid rgba(240, 147, 251, 0.3);
+}
+
+.membership-badge.vip {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Attendance Badge in Table */
+.attendance-badge-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.attendance-badge-table.present {
+  background: rgba(76, 217, 100, 0.15);
+  color: #4cd964;
+  border: 1px solid rgba(76, 217, 100, 0.3);
+}
+
+.attendance-badge-table.absent {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.attendance-badge-table.pending {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Action Buttons in Table */
+.action-buttons-table {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-attendance-table {
+  background: transparent;
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.btn-attendance-table.present {
+  border: 1px solid rgba(76, 217, 100, 0.4);
+  color: #4cd964;
+}
+
+.btn-attendance-table.present:hover:not(:disabled) {
+  background: rgba(76, 217, 100, 0.15);
+  border-color: #4cd964;
+  transform: scale(1.1);
+}
+
+.btn-attendance-table.absent {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-attendance-table.absent:hover:not(:disabled) {
+  background: rgba(76, 217, 100, 0.15);
+  border-color: #4cd964;
+  color: #4cd964;
+  transform: scale(1.1);
+}
+
+.btn-attendance-table:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-remove-table {
+  background: transparent;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.btn-remove-table:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.15);
+  border-color: #ff6b6b;
+  transform: scale(1.1);
+}
+
+.btn-remove-table:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* No Members State */
+.no-members {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.no-members-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.no-members p {
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+/* Error Message */
+.error-message {
+  max-width: 600px;
+  margin: 4rem auto;
+  text-align: center;
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.error-message p {
+  color: #ff6b6b;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.error-message button {
+  background: var(--accent-color, #ff6b35);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.error-message button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .class-detail-container {
+    padding: 1rem;
+  }
+
+  .class-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .members-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .members-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .members-table {
+    min-width: 800px;
+  }
+
+  .members-table th,
+  .members-table td {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .member-avatar-small {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .attendance-indicator-small {
+    width: 14px;
+    height: 14px;
+    font-size: 0.55rem;
+  }
+
+  .action-buttons-table {
+    gap: 0.3rem;
+  }
+
+  .btn-attendance-table,
+  .btn-remove-table {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .header-content h1 {
+    font-size: 1.75rem;
+  }
+}

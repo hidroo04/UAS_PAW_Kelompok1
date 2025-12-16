@@ -41,3 +41,6 @@ class Config:
 
 # Export singleton instance
 config = Config()
+
+# Export JWT_SECRET for backward compatibility
+JWT_SECRET = config.JWT_SECRET_KEY

@@ -33,6 +33,8 @@ const Login = () => {
         // Redirect based on role
         if (response.data.data.role === "admin") {
           navigate("/admin/dashboard");
+        } else if (response.data.data.role === "trainer") {
+          navigate("/trainer/my-classes");
         } else {
           navigate("/");
         }

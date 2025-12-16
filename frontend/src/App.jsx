@@ -16,6 +16,10 @@ import AdminMembers from "./pages/admin/AdminMembers";
 import AdminClasses from "./pages/admin/AdminClasses";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminAttendance from "./pages/admin/AdminAttendance";
+import MyClasses from "./pages/trainer/MyClasses";
+import ClassDetail from "./pages/trainer/ClassDetail";
+import ManageClasses from "./pages/trainer/ManageClasses";
+import Calendar from "./pages/trainer/Calendar";
 import "./App.css";
 
 function App() {
@@ -50,6 +54,12 @@ function App() {
             <Route path="/admin/classes" element={<AdminClasses />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
+            
+            {/* Trainer Routes */}
+            <Route path="/trainer/my-classes" element={<MyClasses />} />
+            <Route path="/trainer/my-classes/:id" element={<ClassDetail />} />
+            <Route path="/trainer/manage-classes" element={<ManageClasses />} />
+            <Route path="/trainer/calendar" element={<Calendar />} />
           </Routes>
         </main>
         <Footer />

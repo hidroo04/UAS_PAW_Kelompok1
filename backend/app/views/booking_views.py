@@ -6,7 +6,7 @@ from pyramid.response import Response
 from sqlalchemy import and_
 import json
 from datetime import datetime
-from ..models import Booking, GymClass, User, Member
+from ..models import Booking, GymClass, User, Member, Attendance
 from sqlalchemy.orm import joinedload
 from ..utils.auth import get_token_from_header, decode_jwt_token
 import jwt
@@ -346,6 +346,11 @@ def get_my_bookings(request):
         
         bookings_data = []
         for booking in bookings:
+            # Get attendance record if exists
+            attendance = db.query(Attendance).filter(
+                Attendance.booking_id == booking.id
+            ).first()
+            
             booking_dict = {
                 'id': booking.id,
                 'member_id': booking.member_id,
@@ -362,7 +367,12 @@ def get_my_bookings(request):
                         'name': booking.gym_class.trainer.name,
                         'email': booking.gym_class.trainer.email
                     } if booking.gym_class.trainer else None
-                } if booking.gym_class else None
+                } if booking.gym_class else None,
+                'attendance': {
+                    'id': attendance.id,
+                    'attended': attendance.attended,
+                    'date': attendance.date.isoformat() if attendance.date else None
+                } if attendance else None
             }
             bookings_data.append(booking_dict)
         
