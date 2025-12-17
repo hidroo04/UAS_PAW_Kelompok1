@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { HiUser, HiMail, HiLockClosed, HiUserGroup, HiCheckCircle } from "react-icons/hi";
 import apiClient from "../services/api";
 import "./Auth.css";
 
@@ -60,75 +61,118 @@ const Register = () => {
   return (
     <div className="auth-container register-page">
       <div className="auth-card">
-        <h2>Register for GymBook</h2>
+        <div className="auth-header">
+          <div className="auth-icon">
+            <HiUserGroup />
+          </div>
+          <h2>Create Account</h2>
+          <p className="auth-subtitle">Join FitZone Gym today</p>
+        </div>
 
         {error && <div className="alert alert-error">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your full name"
-            />
+            <label><HiUser /> Full Name</label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
+            <label><HiMail /> Email Address</label>
+            <div className="input-wrapper">
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Enter your email"
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter your password"
-            />
+            <label><HiLockClosed /> Password</label>
+            <div className="input-wrapper">
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Create a password (min. 6 characters)"
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-            />
+            <label><HiCheckCircle /> Confirm Password</label>
+            <div className="input-wrapper">
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm your password"
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Register as</label>
-            <select name="role" value={formData.role} onChange={handleChange}>
-              <option value="member">Member</option>
-              <option value="trainer">Trainer</option>
-            </select>
+            <label><HiUserGroup /> Account Type</label>
+            <div className="role-selection">
+              <div 
+                className={`role-option ${formData.role === 'member' ? 'active' : ''}`}
+                onClick={() => setFormData({ ...formData, role: 'member' })}
+              >
+                <div className="role-icon">👤</div>
+                <div className="role-info">
+                  <h4>Member</h4>
+                  <p>Book classes & track fitness</p>
+                </div>
+              </div>
+              <div 
+                className={`role-option ${formData.role === 'trainer' ? 'active' : ''}`}
+                onClick={() => setFormData({ ...formData, role: 'trainer' })}
+              >
+                <div className="role-icon">💪</div>
+                <div className="role-info">
+                  <h4>Trainer</h4>
+                  <p>Manage classes & members</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                Creating Account...
+              </>
+            ) : (
+              <>
+                <HiCheckCircle /> Create Account
+              </>
+            )}
           </button>
         </form>
 
-        <p className="auth-link">
-          Already have an account? <Link to="/login">Login here</Link>
-        </p>
+        <div className="auth-footer">
+          <p className="auth-link">
+            Already have an account? <Link to="/login">Sign In</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

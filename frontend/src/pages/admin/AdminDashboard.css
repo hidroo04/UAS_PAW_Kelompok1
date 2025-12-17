@@ -119,8 +119,8 @@
 .stat-card:hover .stat-icon {
   background: var(--accent-color, #ff6b35);
   color: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 2px 12px rgba(255, 107, 53, 0.2);
 }
 
 .stat-info {
@@ -639,7 +639,7 @@
   font-weight: 700;
   font-size: 1.2rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
 }
 
 .class-info {
@@ -775,11 +775,11 @@
 }
 
 .action-btn:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   background: var(--accent-color, #ff6b35);
   color: #ffffff;
   border-color: var(--accent-color, #ff6b35);
-  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.2);
 }
 
 .action-btn svg {

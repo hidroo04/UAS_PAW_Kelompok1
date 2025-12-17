@@ -224,12 +224,12 @@
 
 .member-avatar-small.present {
   background: linear-gradient(135deg, #4cd964 0%, #5de278 100%);
-  box-shadow: 0 0 15px rgba(76, 217, 100, 0.3);
+  box-shadow: 0 0 8px rgba(76, 217, 100, 0.15);
 }
 
 .member-avatar-small.absent {
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
-  box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.15);
 }
 
 .attendance-indicator-small {

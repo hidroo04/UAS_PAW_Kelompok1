@@ -191,7 +191,7 @@
   visibility: hidden;
   transform: translateY(-10px);
   transition: all var(--transition-fast);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .admin-submenu.show {

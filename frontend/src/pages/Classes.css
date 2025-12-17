@@ -199,13 +199,13 @@
   border-radius: 12px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(30px);
+    transform: translateY(10px);
     opacity: 0;
   }
   to {
@@ -319,7 +319,7 @@
 .btn-confirm:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
 }
 
 /* Responsive */

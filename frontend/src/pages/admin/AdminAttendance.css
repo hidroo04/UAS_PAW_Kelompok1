@@ -37,7 +37,7 @@
 .btn-mark-attendance:hover {
   background: rgba(34, 197, 94, 1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
 }
 
 /* Statistics */
@@ -402,7 +402,7 @@
 .btn-save:hover {
   background: rgba(34, 197, 94, 1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
 }
 
 .btn-cancel {

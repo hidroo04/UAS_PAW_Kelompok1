@@ -17,16 +17,16 @@
 
 /* Sidebar */
 .profile-sidebar {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
   border: 1px solid rgba(255, 107, 53, 0.2);
   padding: 2rem;
   height: fit-content;
   position: sticky;
   top: 100px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .profile-tabs {
@@ -74,12 +74,12 @@
 .tab-button:hover {
   background: rgba(255, 107, 53, 0.1);
   color: #ffffff;
-  transform: translateX(4px);
+  transform: translateX(2px);
 }
 
 .tab-button:hover svg {
   color: #ff6b35;
-  transform: scale(1.15);
+  transform: scale(1.05);
 }
 
 .tab-button.active {
@@ -115,12 +115,12 @@
 
 /* Main Content */
 .profile-main {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
   border: 1px solid rgba(255, 107, 53, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 2rem;
   min-height: 500px;
 }
@@ -158,18 +158,18 @@
 }
 
 .profile-avatar {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ff6b35, #ff8c42);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: bold;
-  border: 4px solid rgba(255, 107, 53, 0.4);
-  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.35), 0 0 50px rgba(255, 107, 53, 0.15);
+  border: 3px solid rgba(255, 107, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
   position: relative;
   z-index: 1;
 }
@@ -207,7 +207,8 @@
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(255, 107, 53, 0.4);
   transform: translateX(5px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.12);\n}
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.08);
+}
 
 .detail-row label {
   font-weight: 600;
@@ -329,7 +330,7 @@
 .btn-edit:hover {
   background: rgba(255, 107, 53, 1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
 }
 
 .btn-change-password {
@@ -355,7 +356,7 @@
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 107, 53, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.12);
 }
 
 /* Edit Form */
@@ -395,7 +396,7 @@
   border-color: rgba(255, 107, 53, 0.6);
   background: rgba(255, 255, 255, 0.05);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.08);
   transform: translateY(-2px);
 }
 
@@ -443,7 +444,7 @@
 .btn-primary {
   background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
   position: relative;
   overflow: hidden;
 }
@@ -460,8 +461,8 @@
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
 }
 
 .btn-primary:hover::before {
@@ -572,10 +573,10 @@
 }
 
 .booking-item:hover {
-  transform: translateY(-4px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
-  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 107, 53, 0.35);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.12), 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 107, 53, 0.3);
 }
 
 .booking-item:hover::before {
@@ -784,8 +785,8 @@
 }
 
 .stat-card:hover .stat-icon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
 }
 
 .stat-info h4 {
@@ -930,9 +931,9 @@
 }
 
 .membership-card:hover {
-  border-color: rgba(255, 107, 53, 0.35);
-  box-shadow: 0 12px 40px rgba(255, 107, 53, 0.15);
-  transform: translateY(-2px);
+  border-color: rgba(255, 107, 53, 0.3);
+  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.12);
+  transform: translateY(-1px);
 }
 
 .membership-header {
@@ -954,13 +955,13 @@
   justify-content: center;
   color: white;
   font-size: 2rem;
-  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
   transition: all 0.3s ease;
 }
 
 .membership-card:hover .membership-icon {
-  transform: scale(1.05) rotate(5deg);
-  box-shadow: 0 10px 32px rgba(255, 107, 53, 0.5);
+  transform: scale(1.03);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
 }
 
 .membership-info h3 {
@@ -1210,14 +1211,14 @@
   width: 90%;
   max-width: 520px;
   border: 2px solid rgba(255, 107, 53, 0.3);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 107, 53, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 107, 53, 0.1);
   animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -1305,7 +1306,7 @@
   background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
   border: none;
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
 }
 
 .modal-actions .btn-primary::before {
@@ -1325,7 +1326,7 @@
 
 .modal-actions .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
 }
 
 .modal-actions .btn-secondary {
@@ -1395,7 +1396,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -1413,34 +1414,34 @@
 }
 
 .profile-main {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .booking-item,
 .attendance-item,
 .stat-card {
-  animation: slideUp 0.5s ease-out backwards;
+  animation: slideUp 0.3s ease-out backwards;
 }
 
 .booking-item:nth-child(1),
 .attendance-item:nth-child(1),
 .stat-card:nth-child(1) {
-  animation-delay: 0.1s;
+  animation-delay: 0.05s;
 }
 
 .booking-item:nth-child(2),
 .attendance-item:nth-child(2),
 .stat-card:nth-child(2) {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .booking-item:nth-child(3),
 .attendance-item:nth-child(3),
 .stat-card:nth-child(3) {
-  animation-delay: 0.3s;
+  animation-delay: 0.15s;
 }
 
 .booking-item:nth-child(n+4),
 .attendance-item:nth-child(n+4) {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
