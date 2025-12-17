@@ -7,6 +7,7 @@ from sqlalchemy import and_
 import json
 from datetime import datetime
 from ..models import Booking, GymClass, User, Member, Attendance
+from ..models.user import UserRole
 from sqlalchemy.orm import joinedload
 from ..utils.auth import get_token_from_header, decode_jwt_token
 import jwt
@@ -44,6 +45,7 @@ def get_bookings(request):
                 'member_id': booking.member_id,
                 'class_id': booking.class_id,
                 'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+                'status': booking.status or 'confirmed',
                 'class': {
                     'id': booking.gym_class.id,
                     'name': booking.gym_class.name,
@@ -271,22 +273,30 @@ def cancel_booking(request):
                 content_type='application/json; charset=utf-8'
             )
         
-        # Find member
-        member = db.query(Member).filter(Member.user_id == user_id).first()
-        if not member:
-            return Response(
-                json.dumps({'status': 'error', 'message': 'Member not found'}),
-                status=404,
-                content_type='application/json; charset=utf-8'
-            )
+        # Check if user is admin
+        user = db.query(User).filter(User.id == user_id).first()
+        is_admin = user and user.role == UserRole.ADMIN
         
-        # Find booking
-        booking = db.query(Booking).filter(
-            and_(
-                Booking.id == booking_id,
-                Booking.member_id == member.id  # Ensure member owns this booking
-            )
-        ).first()
+        if is_admin:
+            # Admin can cancel any booking
+            booking = db.query(Booking).filter(Booking.id == booking_id).first()
+        else:
+            # Find member
+            member = db.query(Member).filter(Member.user_id == user_id).first()
+            if not member:
+                return Response(
+                    json.dumps({'status': 'error', 'message': 'Member not found'}),
+                    status=404,
+                    content_type='application/json; charset=utf-8'
+                )
+            
+            # Find booking - member can only cancel their own
+            booking = db.query(Booking).filter(
+                and_(
+                    Booking.id == booking_id,
+                    Booking.member_id == member.id
+                )
+            ).first()
         
         if not booking:
             return Response(
@@ -295,7 +305,7 @@ def cancel_booking(request):
                 content_type='application/json; charset=utf-8'
             )
         
-        # Delete booking
+        # Hapus booking dari database
         db.delete(booking)
         db.commit()
         

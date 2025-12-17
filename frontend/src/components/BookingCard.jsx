@@ -2,16 +2,19 @@ import React from "react";
 import "./BookingCard.css";
 
 const BookingCard = ({ booking, onCancel, showCancel = true }) => {
-  const { id, class: gymClass, booking_date, attendance } = booking;
+  const { id, class: gymClass, booking_date, attendance, status } = booking;
 
   const bookingDate = new Date(booking_date);
   const classSchedule = new Date(gymClass?.schedule);
+  const isCancelled = status === 'cancelled';
 
   return (
-    <div className="booking-card">
+    <div className={`booking-card ${isCancelled ? 'cancelled' : ''}`}>
       <div className="booking-header">
         <h3>{gymClass?.name}</h3>
-        {attendance && (
+        {isCancelled ? (
+          <span className="status-badge cancelled">Cancelled</span>
+        ) : attendance ? (
           <span
             className={`attendance-badge ${
               attendance.attended ? "attended" : "absent"
@@ -19,6 +22,8 @@ const BookingCard = ({ booking, onCancel, showCancel = true }) => {
           >
             {attendance.attended ? "✓ Attended" : "✗ Absent"}
           </span>
+        ) : (
+          <span className="status-badge confirmed">Confirmed</span>
         )}
       </div>
 
@@ -44,7 +49,7 @@ const BookingCard = ({ booking, onCancel, showCancel = true }) => {
         )}
       </div>
 
-      {showCancel && (
+      {showCancel && !isCancelled && (
         <button onClick={() => onCancel(id)} className="btn-cancel">
           Cancel Booking
         </button>

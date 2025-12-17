@@ -2,30 +2,28 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   HiCalendar, 
-  HiUserAdd,
-  HiUserRemove,
   HiCheckCircle,
   HiXCircle,
-  HiAcademicCap,
-  HiClipboardCheck
+  HiClock,
+  HiUserGroup,
+  HiSearch
 } from 'react-icons/hi';
 import apiClient from '../../services/api';
 import './AdminAttendance.css';
 
 const AdminAttendance = () => {
-  const [attendance, setAttendance] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [selectedClass, setSelectedClass] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [loading, setLoading] = useState(true);
-  const [showMarkModal, setShowMarkModal] = useState(false);
-  const [markFormData, setMarkFormData] = useState({
-    member_id: '',
-    class_id: '',
-    date: '',
-    status: 'present'
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    present: 0,
+    absent: 0,
+    not_marked: 0
   });
+  const [selectedClass, setSelectedClass] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,18 +38,30 @@ const AdminAttendance = () => {
     fetchData();
   }, [navigate]);
 
+  useEffect(() => {
+    filterData();
+  }, [selectedClass, searchTerm, attendanceData]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [attendanceRes, classesRes, membersRes] = await Promise.all([
+      const [attendanceRes, classesRes] = await Promise.all([
         apiClient.get('/attendance'),
-        apiClient.get('/classes'),
-        apiClient.get('/users?role=member')
+        apiClient.get('/classes')
       ]);
 
-      setAttendance(attendanceRes.data.data || []);
+      const data = attendanceRes.data.data || [];
+      const stats = attendanceRes.data.statistics || {
+        total: data.length,
+        present: data.filter(a => a.attended === true).length,
+        absent: data.filter(a => a.attended === false).length,
+        not_marked: data.filter(a => a.attended === null).length
+      };
+
+      setAttendanceData(data);
+      setFilteredData(data);
+      setStatistics(stats);
       setClasses(classesRes.data.data || []);
-      setMembers(membersRes.data.data || []);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -59,57 +69,44 @@ const AdminAttendance = () => {
     }
   };
 
-  const getClassName = (classId) => {
-    const cls = classes.find(c => c.id === classId);
-    return cls ? cls.name : 'Unknown Class';
-  };
-
-  const getMemberName = (memberId) => {
-    const member = members.find(m => m.id === memberId);
-    return member ? member.name : 'Unknown Member';
-  };
-
-  const handleMarkAttendance = async (e) => {
-    e.preventDefault();
-    
-    try {
-      await apiClient.post('/attendance', markFormData);
-      alert('Attendance marked successfully!');
-      setShowMarkModal(false);
-      setMarkFormData({ member_id: '', class_id: '', date: '', status: 'present' });
-      fetchData();
-    } catch (err) {
-      alert('Failed to mark attendance');
-      console.error(err);
-    }
-  };
-
-  const filterAttendance = () => {
-    let filtered = [...attendance];
+  const filterData = () => {
+    let filtered = [...attendanceData];
 
     if (selectedClass) {
-      filtered = filtered.filter(a => a.class_id === parseInt(selectedClass));
+      filtered = filtered.filter(a => a.class?.id === parseInt(selectedClass));
     }
 
-    if (selectedDate) {
-      filtered = filtered.filter(a => {
-        const attDate = new Date(a.date).toISOString().split('T')[0];
-        return attDate === selectedDate;
-      });
+    if (searchTerm) {
+      filtered = filtered.filter(a => 
+        a.member?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        a.class?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
-    return filtered;
+    setFilteredData(filtered);
   };
 
-  const filteredAttendance = filterAttendance();
+  const getAttendanceRate = () => {
+    const marked = statistics.present + statistics.absent;
+    if (marked === 0) return 0;
+    return Math.round((statistics.present / marked) * 100);
+  };
 
-  const stats = {
-    total: attendance.length,
-    present: attendance.filter(a => a.status === 'present').length,
-    absent: attendance.filter(a => a.status === 'absent').length,
-    rate: attendance.length > 0 
-      ? Math.round((attendance.filter(a => a.status === 'present').length / attendance.length) * 100) 
-      : 0
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   if (loading) {
@@ -119,70 +116,67 @@ const AdminAttendance = () => {
   return (
     <div className="admin-attendance">
       <div className="attendance-header">
-        <h1>Attendance Management</h1>
-        <button 
-          className="btn-mark-attendance"
-          onClick={() => {
-            setMarkFormData({ 
-              member_id: '', 
-              class_id: '', 
-              date: new Date().toISOString().split('T')[0], 
-              status: 'present' 
-            });
-            setShowMarkModal(true);
-          }}
-        >
-          <HiUserAdd /> Mark Attendance
-        </button>
+        <h1>Attendance Monitoring</h1>
+        <p className="subtitle">Pantau kehadiran dari semua class bookings (read-only)</p>
       </div>
 
-      {/* Statistics */}
+      {/* Statistics Cards */}
       <div className="attendance-stats">
         <div className="stat-card total">
           <div className="stat-icon">
-            <HiClipboardCheck />
+            <HiUserGroup />
           </div>
           <div className="stat-info">
-            <h3>{stats.total}</h3>
-            <p>Total Records</p>
+            <h3>{statistics.total}</h3>
+            <p>Total Bookings</p>
           </div>
         </div>
 
         <div className="stat-card present">
           <div className="stat-icon">
-            <HiUserAdd />
+            <HiCheckCircle />
           </div>
           <div className="stat-info">
-            <h3>{stats.present}</h3>
+            <h3>{statistics.present}</h3>
             <p>Present</p>
           </div>
         </div>
 
         <div className="stat-card absent">
           <div className="stat-icon">
-            <HiUserRemove />
+            <HiXCircle />
           </div>
           <div className="stat-info">
-            <h3>{stats.absent}</h3>
+            <h3>{statistics.absent}</h3>
             <p>Absent</p>
           </div>
         </div>
 
-        <div className="stat-card rate">
+        <div className="stat-card pending">
           <div className="stat-icon">
-            <HiCheckCircle />
+            <HiClock />
           </div>
           <div className="stat-info">
-            <h3>{stats.rate}%</h3>
+            <h3>{statistics.not_marked}</h3>
+            <p>Not Marked</p>
+          </div>
+        </div>
+
+        <div className="stat-card rate">
+          <div className="stat-info rate-display">
+            <h3>{getAttendanceRate()}%</h3>
             <p>Attendance Rate</p>
+          </div>
+          <div className="rate-bar">
+            <div className="rate-fill" style={{ width: `${getAttendanceRate()}%` }}></div>
           </div>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="attendance-filters">
+      {/* Toolbar */}
+      <div className="attendance-toolbar">
         <div className="filter-group">
-          <label>Class</label>
+          <label>Filter by Class</label>
           <select 
             value={selectedClass} 
             onChange={(e) => setSelectedClass(e.target.value)}
@@ -194,170 +188,82 @@ const AdminAttendance = () => {
           </select>
         </div>
 
-        <div className="filter-group">
-          <label>Date</label>
+        <div className="search-box">
+          <HiSearch />
           <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            type="text"
+            placeholder="Search member or class..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
-        <button 
-          className="btn-reset-filter"
-          onClick={() => {
-            setSelectedClass('');
-            setSelectedDate(new Date().toISOString().split('T')[0]);
-          }}
-        >
-          Reset Filters
-        </button>
       </div>
 
-      {/* Attendance Table */}
+      {/* Attendance Table - Read Only for Admin */}
       <div className="attendance-table-container">
         <table className="attendance-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Member</th>
               <th>Class</th>
-              <th>Date</th>
+              <th>Class Schedule</th>
+              <th>Booking Date</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {filteredAttendance.length > 0 ? (
-              filteredAttendance.map((record) => (
-                <tr key={record.id}>
-                  <td>{record.id}</td>
-                  <td>{getMemberName(record.member_id)}</td>
+            {filteredData.length > 0 ? (
+              filteredData.map((record) => (
+                <tr key={record.booking_id}>
                   <td>
-                    <div className="class-cell">
-                      <HiAcademicCap />
-                      <span>{getClassName(record.class_id)}</span>
+                    <div className="member-info">
+                      <span className="member-name">{record.member?.name || 'Unknown'}</span>
+                      <span className="member-email">{record.member?.email || ''}</span>
                     </div>
                   </td>
                   <td>
-                    <div className="date-cell">
-                      <HiCalendar />
-                      <span>{new Date(record.date).toLocaleDateString()}</span>
+                    <span className="class-name">{record.class?.name || 'Unknown'}</span>
+                  </td>
+                  <td>
+                    <div className="schedule-info">
+                      <span className="date">
+                        <HiCalendar /> {formatDate(record.class?.schedule)}
+                      </span>
+                      <span className="time">{formatTime(record.class?.schedule)}</span>
                     </div>
                   </td>
                   <td>
-                    <span className={`status-badge ${record.status}`}>
-                      {record.status === 'present' ? (
-                        <><HiCheckCircle /> Present</>
-                      ) : (
-                        <><HiXCircle /> Absent</>
-                      )}
-                    </span>
+                    <span className="booking-date">{formatDate(record.booking_date)}</span>
+                  </td>
+                  <td>
+                    {record.attended === true && (
+                      <span className="status-badge present">
+                        <HiCheckCircle /> Present
+                      </span>
+                    )}
+                    {record.attended === false && (
+                      <span className="status-badge absent">
+                        <HiXCircle /> Absent
+                      </span>
+                    )}
+                    {record.attended === null && (
+                      <span className="status-badge not-marked">
+                        <HiClock /> Not Marked
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="5" className="no-data">
-                  No attendance records found for the selected filters
+                  No booking records found
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-
-      {/* Mark Attendance Modal */}
-      {showMarkModal && (
-        <div className="modal-overlay" onClick={() => setShowMarkModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Mark Attendance</h2>
-              <button className="modal-close" onClick={() => setShowMarkModal(false)}>×</button>
-            </div>
-            
-            <form onSubmit={handleMarkAttendance} className="attendance-form">
-              <div className="form-group">
-                <label>Member *</label>
-                <select
-                  value={markFormData.member_id}
-                  onChange={(e) => setMarkFormData({ ...markFormData, member_id: e.target.value })}
-                  required
-                >
-                  <option value="">Select a member</option>
-                  {members.map(member => (
-                    <option key={member.id} value={member.id}>
-                      {member.name} ({member.email})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Class *</label>
-                <select
-                  value={markFormData.class_id}
-                  onChange={(e) => setMarkFormData({ ...markFormData, class_id: e.target.value })}
-                  required
-                >
-                  <option value="">Select a class</option>
-                  {classes.map(cls => (
-                    <option key={cls.id} value={cls.id}>
-                      {cls.name} - {cls.schedule}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Date *</label>
-                <input
-                  type="date"
-                  value={markFormData.date}
-                  onChange={(e) => setMarkFormData({ ...markFormData, date: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Status *</label>
-                <div className="status-radio-group">
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      value="present"
-                      checked={markFormData.status === 'present'}
-                      onChange={(e) => setMarkFormData({ ...markFormData, status: e.target.value })}
-                    />
-                    <span className="radio-text present">
-                      <FaCheckCircle /> Present
-                    </span>
-                  </label>
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      value="absent"
-                      checked={markFormData.status === 'absent'}
-                      onChange={(e) => setMarkFormData({ ...markFormData, status: e.target.value })}
-                    />
-                    <span className="radio-text absent">
-                      <FaTimesCircle /> Absent
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button type="submit" className="btn-save">
-                  Save Attendance
-                </button>
-                <button type="button" className="btn-cancel" onClick={() => setShowMarkModal(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

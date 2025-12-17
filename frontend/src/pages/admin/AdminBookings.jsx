@@ -3,10 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { 
   HiSearch, 
   HiCalendar, 
-  HiCheckCircle,
-  HiXCircle,
-  HiClock,
-  HiFilter,
   HiClipboardCheck
 } from 'react-icons/hi';
 import apiClient from '../../services/api';
@@ -18,7 +14,6 @@ const AdminBookings = () => {
   const [classes, setClasses] = useState([]);
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -36,7 +31,7 @@ const AdminBookings = () => {
 
   useEffect(() => {
     filterBookings();
-  }, [searchTerm, statusFilter, bookings]);
+  }, [searchTerm, bookings]);
 
   const fetchData = async () => {
     try {
@@ -63,8 +58,8 @@ const AdminBookings = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(booking => {
-        const className = getClassName(booking.class_id);
-        const memberName = getMemberName(booking.member_id);
+        const className = getClassName(booking);
+        const memberName = getMemberName(booking);
         return (
           className.toLowerCase().includes(searchTerm.toLowerCase()) ||
           memberName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,23 +67,26 @@ const AdminBookings = () => {
       });
     }
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(booking => 
-        (booking.status || 'confirmed') === statusFilter
-      );
-    }
-
     setFilteredBookings(filtered);
   };
 
-  const getClassName = (classId) => {
-    const cls = classes.find(c => c.id === classId);
+  const getClassName = (booking) => {
+    // Try from nested class object first
+    if (booking.class && booking.class.name) {
+      return booking.class.name;
+    }
+    // Fallback to searching in classes array
+    const cls = classes.find(c => c.id === booking.class_id);
     return cls ? cls.name : 'Unknown Class';
   };
 
-  const getMemberName = (memberId) => {
-    const member = members.find(m => m.id === memberId);
+  const getMemberName = (booking) => {
+    // Try from nested member object first
+    if (booking.member && booking.member.user && booking.member.user.name) {
+      return booking.member.user.name;
+    }
+    // Fallback to searching in members array
+    const member = members.find(m => m.id === booking.member_id);
     return member ? member.name : 'Unknown Member';
   };
 
@@ -98,30 +96,24 @@ const AdminBookings = () => {
     }
 
     try {
-      await apiClient.delete(`/bookings/${bookingId}`);
+      const response = await apiClient.delete(`/bookings/${bookingId}`);
+      console.log('Cancel response:', response);
+      
+      // Hapus booking dari list
+      setBookings(prevBookings => prevBookings.filter(b => b.id !== bookingId));
+      setFilteredBookings(prevFiltered => prevFiltered.filter(b => b.id !== bookingId));
+      
       alert('Booking cancelled successfully!');
-      fetchData();
     } catch (err) {
-      alert('Failed to cancel booking');
-      console.error(err);
+      console.error('Cancel error:', err);
+      console.error('Error response:', err.response?.data);
+      const errorMessage = err.response?.data?.message || 'Failed to cancel booking';
+      alert(`Error: ${errorMessage}`);
     }
   };
 
-  const getStatusBadge = (status) => {
-    const statusLower = (status || 'confirmed').toLowerCase();
-    const badges = {
-      confirmed: { class: 'confirmed', icon: <HiCheckCircle />, text: 'Confirmed' },
-      pending: { class: 'pending', icon: <HiClock />, text: 'Pending' },
-      cancelled: { class: 'cancelled', icon: <HiXCircle />, text: 'Cancelled' }
-    };
-    return badges[statusLower] || badges.confirmed;
-  };
-
   const stats = {
-    total: bookings.length,
-    confirmed: bookings.filter(b => (b.status || 'confirmed') === 'confirmed').length,
-    pending: bookings.filter(b => b.status === 'pending').length,
-    cancelled: bookings.filter(b => b.status === 'cancelled').length
+    total: bookings.length
   };
 
   if (loading) {
@@ -134,51 +126,13 @@ const AdminBookings = () => {
         <h1>Bookings Management</h1>
       </div>
 
-      {/* Statistics */}
-      <div className="booking-stats">
-        <div className="stat-box total">
-          <div className="stat-icon">
-            <HiClipboardCheck />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.total}</h3>
-            <p>Total Bookings</p>
-          </div>
+      {/* Toolbar: Total + Search dalam satu baris */}
+      <div className="bookings-toolbar">
+        <div className="total-badge">
+          <HiClipboardCheck />
+          <span><strong>{stats.total}</strong> Total Bookings</span>
         </div>
-
-        <div className="stat-box confirmed">
-          <div className="stat-icon">
-            <HiCheckCircle />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.confirmed}</h3>
-            <p>Confirmed</p>
-          </div>
-        </div>
-
-        <div className="stat-box pending">
-          <div className="stat-icon">
-            <HiClock />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.pending}</h3>
-            <p>Pending</p>
-          </div>
-        </div>
-
-        <div className="stat-box cancelled">
-          <div className="stat-icon">
-            <HiXCircle />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.cancelled}</h3>
-            <p>Cancelled</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bookings-filters">
+        
         <div className="search-box">
           <HiSearch />
           <input
@@ -187,33 +141,6 @@ const AdminBookings = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
-
-        <div className="status-filters">
-          <button 
-            className={statusFilter === 'all' ? 'active' : ''}
-            onClick={() => setStatusFilter('all')}
-          >
-            All
-          </button>
-          <button 
-            className={statusFilter === 'confirmed' ? 'active confirmed' : ''}
-            onClick={() => setStatusFilter('confirmed')}
-          >
-            Confirmed
-          </button>
-          <button 
-            className={statusFilter === 'pending' ? 'active pending' : ''}
-            onClick={() => setStatusFilter('pending')}
-          >
-            Pending
-          </button>
-          <button 
-            className={statusFilter === 'cancelled' ? 'active cancelled' : ''}
-            onClick={() => setStatusFilter('cancelled')}
-          >
-            Cancelled
-          </button>
         </div>
       </div>
 
@@ -226,46 +153,37 @@ const AdminBookings = () => {
               <th>Member</th>
               <th>Class</th>
               <th>Booking Date</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredBookings.length > 0 ? (
               filteredBookings.map((booking) => {
-                const badge = getStatusBadge(booking.status);
                 return (
                   <tr key={booking.id}>
                     <td>{booking.id}</td>
-                    <td>{getMemberName(booking.member_id)}</td>
-                    <td>{getClassName(booking.class_id)}</td>
+                    <td>{getMemberName(booking)}</td>
+                    <td>{getClassName(booking)}</td>
                     <td>
                       <div className="booking-date">
                         <HiCalendar />
                         <span>{new Date(booking.booking_date || Date.now()).toLocaleDateString()}</span>
                       </div>
                     </td>
-                    <td>
-                      <span className={`status-badge ${badge.class}`}>
-                        {badge.icon} {badge.text}
-                      </span>
-                    </td>
                     <td className="actions">
-                      {booking.status !== 'cancelled' && (
-                        <button 
-                          className="btn-cancel-booking"
-                          onClick={() => handleCancelBooking(booking.id)}
-                        >
-                          Cancel
-                        </button>
-                      )}
+                      <button 
+                        className="btn-cancel-booking"
+                        onClick={() => handleCancelBooking(booking.id)}
+                      >
+                        Cancel
+                      </button>
                     </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="6" className="no-data">
+                <td colSpan="5" className="no-data">
                   No bookings found
                 </td>
               </tr>

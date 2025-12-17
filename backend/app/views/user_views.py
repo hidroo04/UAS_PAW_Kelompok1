@@ -4,7 +4,7 @@ import json
 import jwt
 import bcrypt
 from datetime import datetime
-from ..models import User, UserRole
+from ..models import User, UserRole, Member
 from ..config import JWT_SECRET
 
 
@@ -99,6 +99,15 @@ def get_authenticated_user(request):
         return user
     except jwt.InvalidTokenError:
         return None
+
+
+def require_admin(request):
+    """Return authenticated admin user or None if unauthorized"""
+    user = get_authenticated_user(request)
+    if not user or user.role != UserRole.ADMIN:
+        request.response.status = 401
+        return None
+    return user
 
 
 @view_config(route_name='api_get_profile', renderer='json', request_method='GET')
@@ -251,3 +260,113 @@ def change_password(request):
             'status': 'error',
             'message': str(e)
         }
+
+
+# --- Admin user management endpoints ---
+
+@view_config(route_name='api_user', renderer='json', request_method='GET')
+def get_user_by_id(request):
+    """Admin: Get a single user by id including membership details"""
+    admin = require_admin(request)
+    if not admin:
+        return {'status': 'error', 'message': 'Unauthorized'}
+
+    try:
+        db = request.dbsession
+        user_id = int(request.matchdict['id'])
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            request.response.status = 404
+            return {'status': 'error', 'message': 'User not found'}
+
+        data = user.to_dict()
+        return {'status': 'success', 'data': data}
+    except Exception as e:
+        request.response.status = 500
+        return {'status': 'error', 'message': str(e)}
+
+
+@view_config(route_name='api_user', renderer='json', request_method='PUT')
+def update_user_admin(request):
+    """Admin: Update user fields and membership info"""
+    admin = require_admin(request)
+    if not admin:
+        return {'status': 'error', 'message': 'Unauthorized'}
+
+    try:
+        db = request.dbsession
+        user_id = int(request.matchdict['id'])
+        data = request.json_body or {}
+
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            request.response.status = 404
+            return {'status': 'error', 'message': 'User not found'}
+
+        # Update basic fields
+        if 'name' in data and data['name']:
+            user.name = data['name'].strip()
+
+        if 'email' in data and data['email']:
+            new_email = data['email'].strip().lower()
+            if new_email != user.email:
+                existing = db.query(User).filter(User.email == new_email, User.id != user.id).first()
+                if existing:
+                    request.response.status = 400
+                    return {'status': 'error', 'message': 'Email already in use'}
+                user.email = new_email
+
+        # Update membership if applicable
+        membership_plan = data.get('membership_plan')
+        expiry_date_str = data.get('expiry_date')
+        if membership_plan or expiry_date_str is not None:
+            # Ensure user is a member
+            if user.role != UserRole.MEMBER:
+                user.role = UserRole.MEMBER
+            if not user.member:
+                user.member = Member(user_id=user.id, membership_plan=membership_plan or 'Basic', expiry_date=datetime.utcnow().date())
+
+            if membership_plan:
+                user.member.membership_plan = membership_plan
+
+            if expiry_date_str:
+                try:
+                    # Accept YYYY-MM-DD
+                    user.member.expiry_date = datetime.fromisoformat(expiry_date_str).date()
+                except Exception:
+                    request.response.status = 400
+                    return {'status': 'error', 'message': 'Invalid expiry_date format. Use YYYY-MM-DD'}
+
+        user.updated_at = datetime.utcnow()
+        db.flush()
+        db.commit()
+
+        return {'status': 'success', 'message': 'User updated successfully', 'data': user.to_dict()}
+    except Exception as e:
+        db.rollback()
+        request.response.status = 500
+        return {'status': 'error', 'message': str(e)}
+
+
+@view_config(route_name='api_user', renderer='json', request_method='DELETE')
+def delete_user_admin(request):
+    """Admin: Delete user by id (cascade removes member/bookings)"""
+    admin = require_admin(request)
+    if not admin:
+        return {'status': 'error', 'message': 'Unauthorized'}
+
+    try:
+        db = request.dbsession
+        user_id = int(request.matchdict['id'])
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            request.response.status = 404
+            return {'status': 'error', 'message': 'User not found'}
+
+        db.delete(user)
+        db.commit()
+        return {'status': 'success', 'message': 'User deleted successfully'}
+    except Exception as e:
+        db.rollback()
+        request.response.status = 500
+        return {'status': 'error', 'message': str(e)}

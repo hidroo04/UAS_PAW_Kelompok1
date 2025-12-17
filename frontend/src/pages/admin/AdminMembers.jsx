@@ -98,12 +98,19 @@ const AdminMembers = () => {
     }
 
     try {
-      await apiClient.delete(`/users/${memberId}`);
+      const response = await apiClient.delete(`/users/${memberId}`);
+      console.log('Delete response:', response.data);
+      
+      // Langsung update state lokal - hapus member dari list
+      setMembers(prevMembers => prevMembers.filter(m => m.id !== memberId));
+      setFilteredMembers(prevFiltered => prevFiltered.filter(m => m.id !== memberId));
+      
       alert('Member deleted successfully!');
-      fetchMembers();
     } catch (err) {
-      alert('Failed to delete member');
-      console.error(err);
+      console.error('Delete error:', err);
+      console.error('Error response:', err.response?.data);
+      const errorMsg = err.response?.data?.message || 'Failed to delete member';
+      alert(`Error: ${errorMsg}`);
     }
   };
 

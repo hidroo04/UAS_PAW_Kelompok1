@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, UniqueConstraint, String
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -12,6 +12,7 @@ class Booking(Base):
     member_id = Column(Integer, ForeignKey('members.id', ondelete='CASCADE'), nullable=False)
     class_id = Column(Integer, ForeignKey('classes.id', ondelete='CASCADE'), nullable=False)
     booking_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    status = Column(String(20), default='confirmed', nullable=False)  # 'confirmed' or 'cancelled'
     
     # Relationships
     member = relationship("Member", back_populates="bookings")
@@ -31,7 +32,8 @@ class Booking(Base):
             'id': self.id,
             'member_id': self.member_id,
             'class_id': self.class_id,
-            'booking_date': self.booking_date.isoformat() if self.booking_date else None
+            'booking_date': self.booking_date.isoformat() if self.booking_date else None,
+            'status': self.status or 'confirmed'
         }
         if include_member and self.member:
             data['member'] = self.member.to_dict()

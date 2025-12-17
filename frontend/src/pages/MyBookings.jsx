@@ -44,8 +44,9 @@ const MyBookings = () => {
     try {
       const response = await apiClient.delete(`/bookings/${bookingId}`);
       if (response.data.status === "success") {
+        // Hapus booking dari list
+        setBookings(prevBookings => prevBookings.filter(b => b.id !== bookingId));
         alert("Booking cancelled successfully");
-        fetchBookings(); // Refresh
       }
     } catch (err) {
       alert("Failed to cancel booking");
