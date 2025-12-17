@@ -48,12 +48,21 @@ def get_users(request):
         
         users_data = []
         for user in users:
-            users_data.append({
+            user_data = {
                 'id': user.id,
                 'name': user.name,
                 'email': user.email,
                 'role': user.role.value if user.role else None
-            })
+            }
+            
+            # Include membership data for members
+            if user.role == UserRole.MEMBER and user.member:
+                user_data['membership_plan'] = user.member.membership_plan
+                user_data['membership_expiry'] = user.member.expiry_date.isoformat() if user.member.expiry_date else None
+                user_data['membership_status'] = 'Active' if user.member.is_active() else 'Expired'
+                user_data['is_active'] = user.member.is_active()
+            
+            users_data.append(user_data)
         
         return {
             'status': 'success',

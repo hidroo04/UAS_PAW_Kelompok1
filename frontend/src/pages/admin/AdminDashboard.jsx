@@ -73,11 +73,26 @@ const AdminDashboard = () => {
       const bookings = bookingsRes.data.data || [];
       const trainers = trainersRes.data.data || [];
 
-      // Calculate statistics
-      const basicCount = members.filter(m => m.membership_plan === 'Basic').length;
-      const premiumCount = members.filter(m => m.membership_plan === 'Premium').length;
-      const vipCount = members.filter(m => m.membership_plan === 'VIP').length;
-      const activeCount = members.filter(m => m.is_active).length;
+      console.log('Total Members:', members.length);
+      console.log('Members data:', members);
+      if (members.length > 0) {
+        console.log('Sample member:', members[0]);
+        console.log('Membership plans:', members.map(m => m.membership_plan));
+      }
+
+      // Calculate statistics (case-insensitive)
+      const basicCount = members.filter(m => 
+        m.membership_plan && m.membership_plan.toLowerCase() === 'basic'
+      ).length;
+      const premiumCount = members.filter(m => 
+        m.membership_plan && m.membership_plan.toLowerCase() === 'premium'
+      ).length;
+      const vipCount = members.filter(m => 
+        m.membership_plan && m.membership_plan.toLowerCase() === 'vip'
+      ).length;
+      const activeCount = members.filter(m => m.is_active || m.membership_status === 'Active').length;
+
+      console.log('Membership counts:', { basicCount, premiumCount, vipCount, activeCount });
 
       // Calculate upcoming classes
       const now = new Date();
@@ -188,15 +203,27 @@ const AdminDashboard = () => {
 
       setClassUtilization(utilization);
 
-      // Calculate membership trend (last 6 months simulation)
+      // Calculate membership trend (last 6 months simulation) - separated by type
       const monthNames = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const membershipData = monthNames.map((month, index) => {
-        return Math.floor(members.length * (0.6 + (index * 0.08))); // Simulated growth
+      
+      // Simulated growth for each membership type
+      const basicData = monthNames.map((month, index) => {
+        return Math.floor(basicCount * (0.5 + (index * 0.08))); // Basic growth
+      });
+      
+      const premiumData = monthNames.map((month, index) => {
+        return Math.floor(premiumCount * (0.55 + (index * 0.09))); // Premium growth
+      });
+      
+      const vipData = monthNames.map((month, index) => {
+        return Math.floor(vipCount * (0.6 + (index * 0.07))); // VIP growth
       });
 
       setMembershipTrend({
         labels: monthNames,
-        data: membershipData
+        basic: basicData,
+        premium: premiumData,
+        vip: vipData
       });
       
     } catch (err) {
@@ -355,6 +382,13 @@ const AdminDashboard = () => {
       <div className="membership-distribution">
         <h2>Membership Distribution</h2>
         <div className="membership-grid">
+          <div className="membership-card total">
+            <div className="membership-icon"><HiUsers /></div>
+            <h3>{stats.totalMembers}</h3>
+            <p>Total Members</p>
+            <div className="membership-percentage">100%</div>
+          </div>
+
           <div className="membership-card basic">
             <div className="membership-icon"><RiMedalFill /></div>
             <h3>{stats.basicMembers}</h3>
@@ -382,6 +416,12 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+        
+        {stats.totalMembers === 0 && (
+          <p style={{textAlign: 'center', color: '#888', marginTop: '1rem'}}>
+            No members data available. Please add members first.
+          </p>
+        )}
       </div>
 
       {/* Class Utilization & Membership Trend */}
@@ -419,20 +459,79 @@ const AdminDashboard = () => {
           <h2>Membership Growth Trend</h2>
           <div className="trend-chart">
             {membershipTrend.labels.length > 0 ? (
-              <div className="simple-chart">
-                {membershipTrend.labels.map((label, index) => (
-                  <div key={index} className="chart-bar">
-                    <div 
-                      className="bar"
-                      style={{
-                        height: `${(membershipTrend.data[index] / Math.max(...membershipTrend.data)) * 100}%`
-                      }}
-                    >
-                      <span className="bar-value">{membershipTrend.data[index]}</span>
-                    </div>
-                    <span className="bar-label">{label}</span>
+              <div className="bar-chart-container">
+                <div className="chart-legend">
+                  <div className="legend-item">
+                    <span className="legend-dot basic"></span>
+                    <span>Basic</span>
                   </div>
-                ))}
+                  <div className="legend-item">
+                    <span className="legend-dot premium"></span>
+                    <span>Premium</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-dot vip"></span>
+                    <span>VIP</span>
+                  </div>
+                </div>
+                
+                <div className="bar-chart-wrapper">
+                  {membershipTrend.labels.map((label, index) => {
+                    const allValues = [...membershipTrend.basic, ...membershipTrend.premium, ...membershipTrend.vip];
+                    const maxValue = Math.max(...allValues);
+                    
+                    const basicValue = membershipTrend.basic[index];
+                    const premiumValue = membershipTrend.premium[index];
+                    const vipValue = membershipTrend.vip[index];
+                    
+                    const basicWidth = (basicValue / maxValue) * 100;
+                    const premiumWidth = (premiumValue / maxValue) * 100;
+                    const vipWidth = (vipValue / maxValue) * 100;
+                    
+                    return (
+                      <div key={index} className="bar-group">
+                        <div className="bar-month-label">{label}</div>
+                        <div className="bar-columns">
+                          <div className="bar-column">
+                            <span className="bar-type-label">Basic</span>
+                            <div 
+                              className="bar basic-bar" 
+                              style={{width: `${basicWidth}%`}}
+                              data-value={basicValue}
+                            >
+                              <div className="bar-fill"></div>
+                            </div>
+                            <div className="bar-value-label basic-value-label">{basicValue}</div>
+                          </div>
+                          
+                          <div className="bar-column">
+                            <span className="bar-type-label">Premium</span>
+                            <div 
+                              className="bar premium-bar" 
+                              style={{width: `${premiumWidth}%`}}
+                              data-value={premiumValue}
+                            >
+                              <div className="bar-fill"></div>
+                            </div>
+                            <div className="bar-value-label premium-value-label">{premiumValue}</div>
+                          </div>
+                          
+                          <div className="bar-column">
+                            <span className="bar-type-label">VIP</span>
+                            <div 
+                              className="bar vip-bar" 
+                              style={{width: `${vipWidth}%`}}
+                              data-value={vipValue}
+                            >
+                              <div className="bar-fill"></div>
+                            </div>
+                            <div className="bar-value-label vip-value-label">{vipValue}</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <p className="no-data">No trend data</p>

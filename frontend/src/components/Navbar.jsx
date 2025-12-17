@@ -115,9 +115,6 @@ const Navbar = () => {
                     </ul>
                   </li>
                   <li>
-                    <Link to="/my-bookings" onClick={closeMobileMenu}>My Bookings</Link>
-                  </li>
-                  <li>
                     <Link to="/profile" onClick={closeMobileMenu}>Profile</Link>
                   </li>
                 </>
