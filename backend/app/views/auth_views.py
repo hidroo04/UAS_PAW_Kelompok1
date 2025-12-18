@@ -29,8 +29,8 @@ def register(request):
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
+        phone = data.get('phone')
         role = data.get('role', 'MEMBER')  # default: MEMBER
-        membership_plan = data.get('membership_plan', 'Basic')
         
         # Validation
         if not all([name, email, password]):
@@ -55,23 +55,35 @@ def register(request):
         # Hash password
         hashed_password = hash_password(password)
         
-        # Create user
+        # Determine user role and approval status
         user_role = UserRole[role.upper()] if role.upper() in ['ADMIN', 'TRAINER', 'MEMBER'] else UserRole.MEMBER
+        
+        # Trainers need admin approval
+        is_approved = True
+        approval_status = 'approved'
+        if user_role == UserRole.TRAINER:
+            is_approved = False
+            approval_status = 'pending'
+        
         new_user = User(
             name=name,
             email=email,
             password=hashed_password,
-            role=user_role
+            phone=phone,
+            role=user_role,
+            is_approved=is_approved,
+            approval_status=approval_status
         )
         db.add(new_user)
         db.flush()  # Get user ID
         
-        # If role is MEMBER, create member profile
+        # If role is MEMBER, create member profile WITHOUT active membership
+        # Member must choose and pay for membership separately
         if user_role == UserRole.MEMBER:
             member_profile = Member(
                 user_id=new_user.id,
-                membership_plan=membership_plan,
-                expiry_date=date.today() + timedelta(days=365)  # 1 year from now
+                membership_plan=None,  # No membership plan by default
+                expiry_date=None  # No expiry date until they subscribe
             )
             db.add(member_profile)
         
@@ -82,10 +94,21 @@ def register(request):
             'id': new_user.id,
             'name': new_user.name,
             'email': new_user.email,
-            'role': new_user.role.value
+            'role': new_user.role.value,
+            'is_approved': new_user.is_approved,
+            'approval_status': new_user.approval_status
         }
         
-        # Create JWT token
+        # For trainers pending approval, don't return token
+        if user_role == UserRole.TRAINER and not is_approved:
+            return {
+                'status': 'success',
+                'message': 'Trainer registration submitted! Please wait for admin approval before you can login.',
+                'data': user_data,
+                'pending_approval': True
+            }
+        
+        # Create JWT token for approved users
         token = create_jwt_token(new_user.id, new_user.email, new_user.role.value)
         
         return {
@@ -135,12 +158,37 @@ def login(request):
                 content_type='application/json; charset=utf-8'
             )
         
+        # Check if trainer is approved
+        if user.role == UserRole.TRAINER:
+            if user.approval_status == 'pending':
+                return Response(
+                    json.dumps({
+                        'status': 'error', 
+                        'message': 'Your trainer account is pending approval. Please wait for admin to review your application.',
+                        'approval_status': 'pending'
+                    }),
+                    status=403,
+                    content_type='application/json; charset=utf-8'
+                )
+            elif user.approval_status == 'rejected':
+                return Response(
+                    json.dumps({
+                        'status': 'error', 
+                        'message': f'Your trainer application was rejected. Reason: {user.rejection_reason or "No reason provided"}',
+                        'approval_status': 'rejected'
+                    }),
+                    status=403,
+                    content_type='application/json; charset=utf-8'
+                )
+        
         # Prepare user data
         user_data = {
             'id': user.id,
             'name': user.name,
             'email': user.email,
-            'role': user.role.value
+            'role': user.role.value,
+            'is_approved': user.is_approved,
+            'approval_status': user.approval_status
         }
         
         # Create JWT token

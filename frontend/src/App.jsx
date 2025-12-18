@@ -11,11 +11,14 @@ import Classes from "./pages/Classes";
 import MyBookings from "./pages/MyBookings";
 import UserProfile from "./pages/UserProfile";
 import MembershipPlans from "./pages/MembershipPlans";
+import Payment from "./pages/Payment";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMembers from "./pages/admin/AdminMembers";
 import AdminClasses from "./pages/admin/AdminClasses";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminAttendance from "./pages/admin/AdminAttendance";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminTrainers from "./pages/admin/AdminTrainers";
 import MyClasses from "./pages/trainer/MyClasses";
 import ClassDetail from "./pages/trainer/ClassDetail";
 import ManageClasses from "./pages/trainer/ManageClasses";
@@ -46,6 +49,8 @@ function App() {
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/membership" element={<MembershipPlans />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/:orderId" element={<Payment />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />
@@ -54,6 +59,8 @@ function App() {
             <Route path="/admin/classes" element={<AdminClasses />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/trainers" element={<AdminTrainers />} />
             
             {/* Trainer Routes */}
             <Route path="/trainer/my-classes" element={<MyClasses />} />

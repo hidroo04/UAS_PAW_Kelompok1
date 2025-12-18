@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Enum
+from sqlalchemy import Column, Integer, String, DateTime, Enum, Boolean, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
@@ -12,6 +12,12 @@ class UserRole(enum.Enum):
     MEMBER = "member"
 
 
+class ApprovalStatus(enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
 class User(Base):
     __tablename__ = 'users'
     
@@ -23,6 +29,12 @@ class User(Base):
     address = Column(String, nullable=True)
     avatar_url = Column(String(255), nullable=True)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.MEMBER)
+    # Trainer approval fields
+    is_approved = Column(Boolean, default=True)  # False for pending trainers
+    approval_status = Column(String(20), default='approved')  # pending, approved, rejected
+    rejection_reason = Column(Text, nullable=True)  # Reason if rejected
+    approved_at = Column(DateTime, nullable=True)  # When approved
+    approved_by = Column(Integer, nullable=True)  # Admin who approved
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -43,6 +55,10 @@ class User(Base):
             'address': self.address,
             'avatar_url': self.avatar_url,
             'role': self.role.value,
+            'is_approved': self.is_approved,
+            'approval_status': self.approval_status,
+            'rejection_reason': self.rejection_reason,
+            'approved_at': self.approved_at.isoformat() if self.approved_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
         

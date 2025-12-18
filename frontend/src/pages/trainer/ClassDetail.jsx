@@ -53,19 +53,18 @@ const ClassDetail = () => {
     }
   };
 
-  const handleMarkAttendance = async (bookingId, memberName, currentStatus) => {
-    const newStatus = !currentStatus;
-    const statusText = newStatus ? 'present' : 'absent';
+  const handleMarkAttendance = async (bookingId, memberName, markAsPresent) => {
+    const statusText = markAsPresent ? 'present' : 'absent';
     
     if (!window.confirm(`Mark ${memberName} as ${statusText}?`)) {
       return;
     }
 
     try {
-      setMarkingAttendance(bookingId);
+      setMarkingAttendance(`${bookingId}-${markAsPresent ? 'present' : 'absent'}`);
       
       const response = await api.post(`/trainer/classes/${id}/attendance/${bookingId}`, {
-        attended: newStatus
+        attended: markAsPresent
       });
       
       if (response.data.status === 'success') {
@@ -276,17 +275,27 @@ const ClassDetail = () => {
                       <td>
                         <div className="action-buttons-table">
                           <button
-                            className={`btn-attendance-table ${isPresent ? 'present' : 'absent'}`}
-                            onClick={() => handleMarkAttendance(member.booking_id, member.name, isPresent)}
-                            disabled={markingAttendance === member.booking_id}
-                            title={isPresent ? 'Mark as Absent' : 'Mark as Present'}
+                            className={`btn-attendance-table present ${isPresent ? 'active' : ''}`}
+                            onClick={() => handleMarkAttendance(member.booking_id, member.name, true)}
+                            disabled={markingAttendance?.startsWith(`${member.booking_id}-`)}
+                            title="Mark as Present"
                           >
-                            {markingAttendance === member.booking_id ? (
+                            {markingAttendance === `${member.booking_id}-present` ? (
                               '...'
-                            ) : isPresent ? (
-                              <FaUserTimes />
                             ) : (
                               <FaUserCheck />
+                            )}
+                          </button>
+                          <button
+                            className={`btn-attendance-table absent ${hasAttendance && !isPresent ? 'active' : ''}`}
+                            onClick={() => handleMarkAttendance(member.booking_id, member.name, false)}
+                            disabled={markingAttendance?.startsWith(`${member.booking_id}-`)}
+                            title="Mark as Absent"
+                          >
+                            {markingAttendance === `${member.booking_id}-absent` ? (
+                              '...'
+                            ) : (
+                              <FaUserTimes />
                             )}
                           </button>
                           <button

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import BookingCard from "../components/BookingCard";
 import Loading from "../components/Loading";
 import apiClient from "../services/api";
@@ -9,6 +9,7 @@ const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [needsMembership, setNeedsMembership] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,11 +27,19 @@ const MyBookings = () => {
       console.log("My Bookings Response:", response.data);
       if (response.data.status === "success") {
         setBookings(response.data.data);
+        setNeedsMembership(false);
       }
     } catch (err) {
       console.error("Error fetching bookings:", err);
       console.error("Error response:", err.response);
-      setError("Failed to load bookings");
+      
+      // Check if error is due to no membership
+      if (err.response?.status === 403 && err.response?.data?.redirect) {
+        setNeedsMembership(true);
+        setError("");
+      } else {
+        setError("Failed to load bookings");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,7 +53,6 @@ const MyBookings = () => {
     try {
       const response = await apiClient.delete(`/bookings/${bookingId}`);
       if (response.data.status === "success") {
-        // Hapus booking dari list
         setBookings(prevBookings => prevBookings.filter(b => b.id !== bookingId));
         alert("Booking cancelled successfully");
       }
@@ -54,6 +62,28 @@ const MyBookings = () => {
   };
 
   if (loading) return <Loading message="Loading your bookings..." />;
+
+  // Show membership required message
+  if (needsMembership) {
+    return (
+      <div className="my-bookings-page">
+        <div className="page-header">
+          <h1>My Bookings</h1>
+          <p>View and manage your class bookings</p>
+        </div>
+        <div className="no-membership-card">
+          <div className="no-membership-icon">🏋️</div>
+          <h2>No Active Membership</h2>
+          <p>You need an active membership to book and view your classes.</p>
+          <p>Choose a membership plan to get started!</p>
+          <Link to="/membership" className="btn-subscribe">
+            View Membership Plans
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div className="error-message">{error}</div>;
 
   return (
@@ -73,7 +103,12 @@ const MyBookings = () => {
             />
           ))
         ) : (
-          <p className="no-data">You haven't booked any classes yet</p>
+          <div className="no-bookings">
+            <p className="no-data">You haven't booked any classes yet</p>
+            <Link to="/classes" className="btn-browse-classes">
+              Browse Classes
+            </Link>
+          </div>
         )}
       </div>
     </div>

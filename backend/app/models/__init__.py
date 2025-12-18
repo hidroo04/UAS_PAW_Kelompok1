@@ -13,6 +13,7 @@ from .gym_class_enhanced import GymClass, ClassType, Difficulty
 from .booking import Booking
 from .attendance import Attendance
 from .review import Review
+from .payment import Payment, PaymentStatus, PaymentMethod
 
 # Export all models
 __all__ = [
@@ -26,6 +27,9 @@ __all__ = [
     'Booking',
     'Attendance',
     'Review',
+    'Payment',
+    'PaymentStatus',
+    'PaymentMethod',
     'get_engine',
     'get_session_factory',
     'init_db'

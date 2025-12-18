@@ -370,3 +370,207 @@ def delete_user_admin(request):
         db.rollback()
         request.response.status = 500
         return {'status': 'error', 'message': str(e)}
+
+
+# ==================== TRAINER APPROVAL ENDPOINTS ====================
+
+@view_config(route_name='api_pending_trainers', renderer='json', request_method='GET')
+def get_pending_trainers(request):
+    """Admin: Get all trainers pending approval"""
+    admin = require_admin(request)
+    if not admin:
+        return Response(
+            json.dumps({'status': 'error', 'message': 'Admin access required'}),
+            status=403,
+            content_type='application/json; charset=utf-8'
+        )
+    
+    try:
+        db = request.dbsession
+        
+        # Get filter from query params
+        status_filter = request.params.get('status', 'pending')  # pending, approved, rejected, all
+        
+        query = db.query(User).filter(User.role == UserRole.TRAINER)
+        
+        if status_filter != 'all':
+            query = query.filter(User.approval_status == status_filter)
+        
+        trainers = query.order_by(User.created_at.desc()).all()
+        
+        trainers_data = []
+        for trainer in trainers:
+            trainers_data.append({
+                'id': trainer.id,
+                'name': trainer.name,
+                'email': trainer.email,
+                'phone': trainer.phone,
+                'is_approved': trainer.is_approved,
+                'approval_status': trainer.approval_status,
+                'rejection_reason': trainer.rejection_reason,
+                'approved_at': trainer.approved_at.isoformat() if trainer.approved_at else None,
+                'created_at': trainer.created_at.isoformat() if trainer.created_at else None
+            })
+        
+        # Get counts
+        pending_count = db.query(User).filter(
+            User.role == UserRole.TRAINER,
+            User.approval_status == 'pending'
+        ).count()
+        
+        approved_count = db.query(User).filter(
+            User.role == UserRole.TRAINER,
+            User.approval_status == 'approved'
+        ).count()
+        
+        rejected_count = db.query(User).filter(
+            User.role == UserRole.TRAINER,
+            User.approval_status == 'rejected'
+        ).count()
+        
+        return {
+            'status': 'success',
+            'data': trainers_data,
+            'counts': {
+                'pending': pending_count,
+                'approved': approved_count,
+                'rejected': rejected_count,
+                'total': pending_count + approved_count + rejected_count
+            }
+        }
+        
+    except Exception as e:
+        return Response(
+            json.dumps({'status': 'error', 'message': str(e)}),
+            status=500,
+            content_type='application/json; charset=utf-8'
+        )
+
+
+@view_config(route_name='api_approve_trainer', renderer='json', request_method='POST')
+def approve_trainer(request):
+    """Admin: Approve a pending trainer"""
+    admin = require_admin(request)
+    if not admin:
+        return Response(
+            json.dumps({'status': 'error', 'message': 'Admin access required'}),
+            status=403,
+            content_type='application/json; charset=utf-8'
+        )
+    
+    try:
+        db = request.dbsession
+        trainer_id = int(request.matchdict['id'])
+        
+        trainer = db.query(User).filter(
+            User.id == trainer_id,
+            User.role == UserRole.TRAINER
+        ).first()
+        
+        if not trainer:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Trainer not found'}),
+                status=404,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        if trainer.approval_status == 'approved':
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Trainer is already approved'}),
+                status=400,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Approve trainer
+        trainer.is_approved = True
+        trainer.approval_status = 'approved'
+        trainer.approved_at = datetime.utcnow()
+        trainer.approved_by = admin.id
+        trainer.rejection_reason = None
+        
+        db.commit()
+        
+        return {
+            'status': 'success',
+            'message': f'Trainer {trainer.name} has been approved successfully!',
+            'data': {
+                'id': trainer.id,
+                'name': trainer.name,
+                'email': trainer.email,
+                'approval_status': trainer.approval_status,
+                'approved_at': trainer.approved_at.isoformat()
+            }
+        }
+        
+    except Exception as e:
+        db.rollback()
+        return Response(
+            json.dumps({'status': 'error', 'message': str(e)}),
+            status=500,
+            content_type='application/json; charset=utf-8'
+        )
+
+
+@view_config(route_name='api_reject_trainer', renderer='json', request_method='POST')
+def reject_trainer(request):
+    """Admin: Reject a pending trainer"""
+    admin = require_admin(request)
+    if not admin:
+        return Response(
+            json.dumps({'status': 'error', 'message': 'Admin access required'}),
+            status=403,
+            content_type='application/json; charset=utf-8'
+        )
+    
+    try:
+        db = request.dbsession
+        trainer_id = int(request.matchdict['id'])
+        data = request.json_body
+        reason = data.get('reason', 'Application does not meet our requirements')
+        
+        trainer = db.query(User).filter(
+            User.id == trainer_id,
+            User.role == UserRole.TRAINER
+        ).first()
+        
+        if not trainer:
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Trainer not found'}),
+                status=404,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        if trainer.approval_status == 'rejected':
+            return Response(
+                json.dumps({'status': 'error', 'message': 'Trainer is already rejected'}),
+                status=400,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Reject trainer
+        trainer.is_approved = False
+        trainer.approval_status = 'rejected'
+        trainer.rejection_reason = reason
+        
+        db.commit()
+        
+        return {
+            'status': 'success',
+            'message': f'Trainer {trainer.name} has been rejected.',
+            'data': {
+                'id': trainer.id,
+                'name': trainer.name,
+                'email': trainer.email,
+                'approval_status': trainer.approval_status,
+                'rejection_reason': trainer.rejection_reason
+            }
+        }
+        
+    except Exception as e:
+        db.rollback()
+        return Response(
+            json.dumps({'status': 'error', 'message': str(e)}),
+            status=500,
+            content_type='application/json; charset=utf-8'
+        )
+

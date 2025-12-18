@@ -6,7 +6,9 @@ import {
   HiUsers, 
   HiAcademicCap, 
   HiCalendar, 
-  HiClipboardCheck 
+  HiClipboardCheck,
+  HiCreditCard,
+  HiUserGroup
 } from "react-icons/hi";
 import "./Navbar.css";
 
@@ -110,6 +112,16 @@ const Navbar = () => {
                       <li>
                         <Link to="/admin/attendance" onClick={closeMobileMenu}>
                           <HiClipboardCheck /> Attendance
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/admin/payments" onClick={closeMobileMenu}>
+                          <HiCreditCard /> Payments
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/admin/trainers" onClick={closeMobileMenu}>
+                          <HiUserGroup /> Trainers
                         </Link>
                       </li>
                     </ul>

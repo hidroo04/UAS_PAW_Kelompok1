@@ -5,7 +5,7 @@ from pyramid.view import view_config
 from pyramid.response import Response
 from sqlalchemy import and_
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..models import Booking, GymClass, User, Member, Attendance
 from sqlalchemy.orm import joinedload
 from ..utils.auth import get_token_from_header, decode_jwt_token
@@ -31,6 +31,56 @@ def get_authenticated_trainer_id(request):
         return None, str(e)
 
 
+def cleanup_expired_classes(db, trainer_id):
+    """
+    Auto cleanup: Mark absent untuk member yang tidak hadir pada kelas yang sudah lewat,
+    lalu hapus kelas tersebut
+    """
+    now = datetime.utcnow()
+    
+    # Cari kelas yang sudah lewat jadwalnya
+    expired_classes = db.query(GymClass).filter(
+        and_(
+            GymClass.trainer_id == trainer_id,
+            GymClass.schedule < now
+        )
+    ).all()
+    
+    cleaned_classes = []
+    for gym_class in expired_classes:
+        # Get all bookings for this class
+        bookings = db.query(Booking).filter(Booking.class_id == gym_class.id).all()
+        
+        for booking in bookings:
+            # Cek apakah attendance sudah ada
+            existing = db.query(Attendance).filter(
+                Attendance.booking_id == booking.id
+            ).first()
+            
+            if not existing:
+                # Jika tidak ada attendance record, otomatis buat sebagai absent
+                new_attendance = Attendance(
+                    booking_id=booking.id,
+                    attended=False,
+                    date=now
+                )
+                db.add(new_attendance)
+        
+        cleaned_classes.append({
+            'id': gym_class.id,
+            'name': gym_class.name,
+            'schedule': gym_class.schedule.isoformat() if gym_class.schedule else None
+        })
+        
+        # Hapus kelas (cascade akan hapus bookings dan attendance)
+        db.delete(gym_class)
+    
+    if cleaned_classes:
+        db.commit()
+    
+    return cleaned_classes
+
+
 @view_config(route_name='api_trainer_classes', renderer='json', request_method='GET')
 def get_trainer_classes(request):
     """Get all classes taught by the authenticated trainer with member details"""
@@ -46,7 +96,10 @@ def get_trainer_classes(request):
                 content_type='application/json; charset=utf-8'
             )
         
-        # Get classes taught by this trainer
+        # Auto cleanup expired classes first
+        cleaned = cleanup_expired_classes(db, trainer_id)
+        
+        # Get classes taught by this trainer (yang belum expired)
         classes = db.query(GymClass).options(
             joinedload(GymClass.trainer),
             joinedload(GymClass.bookings).joinedload(Booking.member).joinedload(Member.user)
@@ -62,7 +115,7 @@ def get_trainer_classes(request):
             members_data = []
             for booking in bookings:
                 if booking.member and booking.member.user:
-                    # Get attendance record if exists
+                    # Get attendance record (single)
                     attendance = db.query(Attendance).filter(
                         Attendance.booking_id == booking.id
                     ).first()
@@ -82,6 +135,9 @@ def get_trainer_classes(request):
                         } if attendance else None
                     })
             
+            # Hitung apakah class sudah expired
+            is_expired = gym_class.schedule < datetime.utcnow() if gym_class.schedule else False
+            
             class_dict = {
                 'id': gym_class.id,
                 'name': gym_class.name,
@@ -90,6 +146,7 @@ def get_trainer_classes(request):
                 'capacity': gym_class.capacity,
                 'enrolled_count': len(members_data),
                 'available_slots': gym_class.capacity - len(members_data),
+                'is_expired': is_expired,
                 'members': members_data
             }
             classes_data.append(class_dict)
@@ -97,7 +154,8 @@ def get_trainer_classes(request):
         return {
             'status': 'success',
             'data': classes_data,
-            'count': len(classes_data)
+            'count': len(classes_data),
+            'cleaned_classes': cleaned if cleaned else []
         }
     except Exception as e:
         import traceback
@@ -382,6 +440,29 @@ def create_class(request):
                 content_type='application/json; charset=utf-8'
             )
         
+        # Check if trainer already has a class at the same time (within 1 hour window)
+        from datetime import timedelta
+        time_window_start = schedule - timedelta(hours=1)
+        time_window_end = schedule + timedelta(hours=1)
+        
+        existing_class = db.query(GymClass).filter(
+            and_(
+                GymClass.trainer_id == trainer_id,
+                GymClass.schedule >= time_window_start,
+                GymClass.schedule <= time_window_end
+            )
+        ).first()
+        
+        if existing_class:
+            return Response(
+                json.dumps({
+                    'status': 'error', 
+                    'message': f'You already have a class "{existing_class.name}" scheduled at {existing_class.schedule.strftime("%Y-%m-%d %H:%M")}. Please choose a different time (at least 1 hour apart).'
+                }),
+                status=400,
+                content_type='application/json; charset=utf-8'
+            )
+        
         # Create new class
         new_class = GymClass(
             name=data['name'],
@@ -451,20 +532,48 @@ def update_class(request):
                 content_type='application/json; charset=utf-8'
             )
         
-        # Update fields
-        if 'name' in data:
-            gym_class.name = data['name']
-        if 'description' in data:
-            gym_class.description = data['description']
+        # If schedule is being updated, check for conflicts
         if 'schedule' in data:
             try:
-                gym_class.schedule = datetime.fromisoformat(data['schedule'].replace('Z', '+00:00'))
+                new_schedule = datetime.fromisoformat(data['schedule'].replace('Z', '+00:00'))
+                
+                # Check for schedule conflict (within 1 hour window, excluding current class)
+                from datetime import timedelta
+                time_window_start = new_schedule - timedelta(hours=1)
+                time_window_end = new_schedule + timedelta(hours=1)
+                
+                existing_class = db.query(GymClass).filter(
+                    and_(
+                        GymClass.trainer_id == trainer_id,
+                        GymClass.id != class_id,  # Exclude current class
+                        GymClass.schedule >= time_window_start,
+                        GymClass.schedule <= time_window_end
+                    )
+                ).first()
+                
+                if existing_class:
+                    return Response(
+                        json.dumps({
+                            'status': 'error', 
+                            'message': f'You already have a class "{existing_class.name}" scheduled at {existing_class.schedule.strftime("%Y-%m-%d %H:%M")}. Please choose a different time (at least 1 hour apart).'
+                        }),
+                        status=400,
+                        content_type='application/json; charset=utf-8'
+                    )
+                
+                gym_class.schedule = new_schedule
             except ValueError:
                 return Response(
                     json.dumps({'status': 'error', 'message': 'Invalid schedule format'}),
                     status=400,
                     content_type='application/json; charset=utf-8'
                 )
+        
+        # Update other fields
+        if 'name' in data:
+            gym_class.name = data['name']
+        if 'description' in data:
+            gym_class.description = data['description']
         if 'capacity' in data:
             gym_class.capacity = int(data['capacity'])
         

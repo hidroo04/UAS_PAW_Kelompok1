@@ -113,25 +113,45 @@ const UserProfile = () => {
 
   const fetchMembership = async () => {
     try {
-      // Gunakan data dari userData yang sudah berisi info member
-      const response = await apiClient.get('/bookings/my');
-      const bookingsData = response.data.status === 'success' ? response.data.data : [];
-      const attendedData = bookingsData.filter(b => b.attendance);
+      // Fetch membership dari endpoint khusus
+      const membershipResponse = await apiClient.get('/membership/my');
+      const membershipData = membershipResponse.data.data;
       
-      if (userData) {
-        const expiryDate = userData.membership_expiry ? new Date(userData.membership_expiry) : null;
-        const isActive = expiryDate ? expiryDate > new Date() : false;
-        
-        setMembership({
-          plan: userData.membership_plan || 'Basic',
-          status: isActive ? 'Active' : 'Expired',
-          expiry: userData.membership_expiry,
-          total_bookings: bookingsData.length,
-          total_attended: attendedData.filter(b => b.attendance.attended === true).length
-        });
+      // Fetch bookings untuk stats
+      let totalBookings = 0;
+      let totalAttended = 0;
+      try {
+        const bookingsResponse = await apiClient.get('/bookings/my');
+        const bookingsData = bookingsResponse.data.status === 'success' ? bookingsResponse.data.data : [];
+        totalBookings = bookingsData.length;
+        totalAttended = bookingsData.filter(b => b.attendance?.attended === true).length;
+      } catch (err) {
+        console.log('No bookings found');
       }
+      
+      setMembership({
+        plan: membershipData?.membership_plan || null,
+        status: membershipData?.is_active ? 'Active' : (membershipData?.membership_plan ? 'Expired' : 'No Plan'),
+        expiry: membershipData?.expiry_date,
+        days_remaining: membershipData?.days_remaining || 0,
+        total_bookings: totalBookings,
+        total_attended: totalAttended,
+        plan_details: membershipData?.plan_details,
+        class_limit: membershipData?.class_limit,
+        monthly_bookings: membershipData?.monthly_bookings || 0,
+        remaining_classes: membershipData?.remaining_classes,
+        class_limit_text: membershipData?.class_limit_text
+      });
     } catch (err) {
       console.error('Error fetching membership:', err);
+      setMembership({
+        plan: null,
+        status: 'No Plan',
+        expiry: null,
+        days_remaining: 0,
+        total_bookings: 0,
+        total_attended: 0
+      });
     }
   };
 
@@ -442,6 +462,8 @@ const UserProfile = () => {
     );
   };
 
+  const navigate = useNavigate();
+
   const renderMembershipTab = () => (
     <div className="membership-content">
       <div className="section-header">
@@ -455,106 +477,105 @@ const UserProfile = () => {
               {membership.plan === 'VIP' && <RiVipCrownFill size={48} />}
               {membership.plan === 'Premium' && <RiUserStarFill size={48} />}
               {membership.plan === 'Basic' && <RiMedalFill size={48} />}
+              {!membership.plan && <HiCreditCard size={48} />}
             </div>
             <div className="membership-title">
-              <h4>{membership.plan || 'Basic'} Membership</h4>
-              <span className={`status-badge ${membership.status?.toLowerCase() || 'active'}`}>
-                {membership.status || 'Active'}
+              <h4>{membership.plan ? `${membership.plan} Membership` : 'No Active Membership'}</h4>
+              <span className={`status-badge ${membership.status?.toLowerCase().replace(' ', '-') || 'inactive'}`}>
+                {membership.status || 'No Plan'}
               </span>
             </div>
           </div>
-          <div className="membership-details">
-            {membership.expiry && (
-              <div className="detail-row">
-                <label><HiCalendar /> Expires On</label>
-                <span>{new Date(membership.expiry).toLocaleDateString()}</span>
+          
+          {membership.plan ? (
+            <>
+              <div className="membership-details">
+                {membership.expiry && (
+                  <div className="detail-row">
+                    <label><HiCalendar /> Expires On</label>
+                    <span>{membership.expiry}</span>
+                  </div>
+                )}
+                {membership.days_remaining > 0 && (
+                  <div className="detail-row">
+                    <label><HiClock /> Days Remaining</label>
+                    <span className="days-badge">{membership.days_remaining} days</span>
+                  </div>
+                )}
+                <div className="detail-row">
+                  <label><HiAcademicCap /> Class Limit</label>
+                  <span className="class-limit-badge">
+                    {membership.class_limit === -1 ? 'Unlimited' : `${membership.class_limit} kelas/bulan`}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <label><HiClipboardCheck /> Monthly Usage</label>
+                  <span className={`usage-badge ${membership.remaining_classes === 0 && membership.class_limit !== -1 ? 'limit-reached' : ''}`}>
+                    {membership.class_limit === -1 
+                      ? `${membership.monthly_bookings || 0} kelas (Unlimited)` 
+                      : `${membership.monthly_bookings || 0}/${membership.class_limit} kelas`}
+                  </span>
+                </div>
+                {membership.class_limit !== -1 && (
+                  <div className="detail-row">
+                    <label><HiCheckCircle /> Remaining</label>
+                    <span className={`remaining-badge ${membership.remaining_classes === 0 ? 'zero' : ''}`}>
+                      {membership.remaining_classes} kelas tersisa
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-            <div className="detail-row">
-              <label><HiClipboardCheck /> Total Bookings</label>
-              <span>{membership.total_bookings || bookings.length}</span>
+              <div className="membership-benefits">
+                <h5>Membership Benefits</h5>
+                <ul>
+                  {membership.plan_details?.features?.map((feature, index) => (
+                    <li key={index}>✓ {feature}</li>
+                  )) || (
+                    <>
+                      {membership.plan === 'VIP' && (
+                        <>
+                          <li>✓ Unlimited class bookings</li>
+                          <li>✓ Priority booking access</li>
+                          <li>✓ Free personal training sessions</li>
+                          <li>✓ Access to premium equipment</li>
+                        </>
+                      )}
+                      {membership.plan === 'Premium' && (
+                        <>
+                          <li>✓ Max 10 classes per month</li>
+                          <li>✓ Personal trainer consultation</li>
+                          <li>✓ Nutrition guide</li>
+                        </>
+                      )}
+                      {membership.plan === 'Basic' && (
+                        <>
+                          <li>✓ Max 5 classes per month</li>
+                          <li>✓ Access to gym equipment</li>
+                          <li>✓ Locker room access</li>
+                        </>
+                      )}
+                    </>
+                  )}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <div className="no-membership-message">
+              <p>You don't have an active membership.</p>
+              <p className="hint">Subscribe to a membership plan to start booking classes!</p>
+              <button 
+                className="btn-subscribe"
+                onClick={() => navigate('/membership')}
+              >
+                Choose Membership Plan
+              </button>
             </div>
-            <div className="detail-row">
-              <label><HiCheckCircle /> Classes Attended</label>
-              <span>{membership.total_attended || attendance.length}</span>
-            </div>
-          </div>
-          <div className="membership-benefits">
-            <h5>Membership Benefits</h5>
-            <ul>
-              {membership.plan === 'VIP' && (
-                <>
-                  <li>✓ Unlimited class bookings</li>
-                  <li>✓ Priority booking access</li>
-                  <li>✓ Free personal training sessions</li>
-                  <li>✓ Access to premium equipment</li>
-                </>
-              )}
-              {membership.plan === 'Premium' && (
-                <>
-                  <li>✓ Up to 20 classes per month</li>
-                  <li>✓ Priority booking</li>
-                  <li>✓ Group training sessions</li>
-                </>
-              )}
-              {membership.plan === 'Basic' && (
-                <>
-                  <li>✓ Up to 10 classes per month</li>
-                  <li>✓ Access to basic equipment</li>
-                  <li>✓ Standard booking</li>
-                </>
-              )}
-            </ul>
-          </div>
+          )}
         </div>
       ) : (
         <div className="no-data-card">
           <HiCreditCard size={48} />
-          <p>No membership information available</p>
-          <small>Contact admin for membership details</small>
-        </div>
-      )}
-    </div>
-  );
-
-  const oldRenderMembershipTab = () => (
-    <div className="membership-content">
-      <h3>Membership Details</h3>
-      {membership ? (
-        <div className="membership-card">
-          <div className="membership-header">
-            <HiCreditCard size={40} />
-            <h4>{membership.plan_name}</h4>
-          </div>
-          <div className="membership-details">
-            <div className="detail-row">
-              <label>Status</label>
-              <span className={`status-badge status-${membership.status}`}>
-                {membership.status}
-              </span>
-            </div>
-            <div className="detail-row">
-              <label>Start Date</label>
-              <span>{new Date(membership.start_date).toLocaleDateString()}</span>
-            </div>
-            <div className="detail-row">
-              <label>End Date</label>
-              <span>{new Date(membership.end_date).toLocaleDateString()}</span>
-            </div>
-            <div className="detail-row">
-              <label>Days Remaining</label>
-              <span className="highlight">
-                {Math.ceil((new Date(membership.end_date) - new Date()) / (1000 * 60 * 60 * 24))} days
-              </span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="no-membership">
-          <p>No active membership</p>
-          <button className="btn-primary" onClick={() => window.location.href = '/membership'}>
-            View Plans
-          </button>
+          <p>Loading membership information...</p>
         </div>
       )}
     </div>

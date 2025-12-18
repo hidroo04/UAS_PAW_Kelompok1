@@ -21,6 +21,65 @@
   font-size: 1rem;
 }
 
+/* Current Membership Banner */
+.current-membership-banner {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-membership-banner.active {
+  background: linear-gradient(135deg, rgba(76, 217, 100, 0.1), rgba(76, 217, 100, 0.05));
+  border: 1px solid rgba(76, 217, 100, 0.3);
+}
+
+.current-membership-banner.inactive {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.membership-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.membership-status .status-icon {
+  font-size: 2rem;
+  color: #4cd964;
+}
+
+.membership-status .status-icon.warning {
+  color: #ffc107;
+}
+
+.membership-status .status-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.membership-status .status-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.membership-status .status-info p.class-usage {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #ff6b35;
+}
+
+.membership-status .status-info p.class-usage .remaining {
+  color: #22c55e;
+  font-weight: 500;
+}
+
 /* Plans Grid */
 .plans-grid {
   display: grid;
@@ -46,6 +105,11 @@
   transform: translateY(-4px);
 }
 
+.plan-card.current {
+  border-color: #4cd964;
+  box-shadow: 0 0 20px rgba(76, 217, 100, 0.2);
+}
+
 .plan-card.popular {
   border-color: var(--accent-color);
 }
@@ -56,6 +120,19 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent-color);
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.current-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: #4cd964;
   color: white;
   padding: 0.25rem 1rem;
   border-radius: var(--radius-sm);

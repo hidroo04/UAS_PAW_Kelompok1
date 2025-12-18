@@ -101,7 +101,16 @@ const Classes = () => {
       }
     } catch (err) {
       setShowModal(false);
-      alert(err.response?.data?.message || "Booking failed");
+      const errorMessage = err.response?.data?.message || "Booking failed";
+      
+      // Check if redirect to membership page
+      if (err.response?.data?.redirect === '/membership') {
+        if (window.confirm(`${errorMessage}\n\nKlik OK untuk memilih membership plan.`)) {
+          navigate('/membership');
+        }
+      } else {
+        alert(errorMessage);
+      }
     }
   };
 

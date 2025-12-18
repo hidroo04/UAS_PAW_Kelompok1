@@ -118,6 +118,34 @@ def create_booking(request):
                 content_type='application/json; charset=utf-8'
             )
         
+        # Check if member has active membership
+        if not member.membership_plan or not member.expiry_date:
+            return Response(
+                json.dumps({
+                    'status': 'error', 
+                    'message': 'You need an active membership to book classes. Please subscribe to a membership plan first.',
+                    'redirect': '/membership'
+                }),
+                status=403,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Check if membership is expired
+        if member.expiry_date < datetime.utcnow().date():
+            # Clear expired membership
+            member.membership_plan = None
+            member.expiry_date = None
+            db.commit()
+            return Response(
+                json.dumps({
+                    'status': 'error', 
+                    'message': 'Your membership has expired. Please renew your membership to book classes.',
+                    'redirect': '/membership'
+                }),
+                status=403,
+                content_type='application/json; charset=utf-8'
+            )
+        
         # Check if class exists
         gym_class = db.query(GymClass).filter(GymClass.id == class_id).first()
         if not gym_class:
@@ -150,6 +178,38 @@ def create_booking(request):
                 status=400,
                 content_type='application/json; charset=utf-8'
             )
+        
+        # Check membership class limit
+        # Basic = 5 classes/month, Premium = 10 classes/month, VIP = unlimited
+        CLASS_LIMITS = {
+            'Basic': 5,
+            'Premium': 10,
+            'VIP': -1  # unlimited
+        }
+        
+        class_limit = CLASS_LIMITS.get(member.membership_plan, 0)
+        
+        if class_limit != -1:  # Not unlimited
+            # Count bookings this month
+            from datetime import date
+            today = date.today()
+            first_day_of_month = today.replace(day=1)
+            
+            monthly_bookings = db.query(Booking).filter(
+                Booking.member_id == member.id,
+                Booking.booking_date >= first_day_of_month
+            ).count()
+            
+            if monthly_bookings >= class_limit:
+                return Response(
+                    json.dumps({
+                        'status': 'error', 
+                        'message': f'You have reached your monthly class limit ({class_limit} classes for {member.membership_plan} membership). Upgrade to a higher plan for more classes!',
+                        'redirect': '/membership'
+                    }),
+                    status=403,
+                    content_type='application/json; charset=utf-8'
+                )
         
         # Create booking
         new_booking = Booking(
@@ -347,6 +407,30 @@ def get_my_bookings(request):
                 'data': [],
                 'count': 0
             }
+        
+        # Check if member has active membership
+        if not member.membership_plan or not member.expiry_date:
+            return Response(
+                json.dumps({
+                    'status': 'error',
+                    'message': 'You need an active membership to view your bookings. Please subscribe to a membership plan first.',
+                    'redirect': '/membership'
+                }),
+                status=403,
+                content_type='application/json; charset=utf-8'
+            )
+        
+        # Check if membership is expired
+        if member.expiry_date < datetime.utcnow().date():
+            return Response(
+                json.dumps({
+                    'status': 'error',
+                    'message': 'Your membership has expired. Please renew your membership.',
+                    'redirect': '/membership'
+                }),
+                status=403,
+                content_type='application/json; charset=utf-8'
+            )
         
         # Query bookings for this member
         bookings = db.query(Booking).options(

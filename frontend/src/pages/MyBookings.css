@@ -30,8 +30,88 @@
   color: var(--text-secondary);
 }
 
+/* No Membership Card */
+.no-membership-card {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  margin-top: 2rem;
+}
+
+.no-membership-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.no-membership-card h2 {
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.no-membership-card p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.btn-subscribe {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-subscribe:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+/* No Bookings */
+.no-bookings {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.btn-browse-classes {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-browse-classes:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
   .my-bookings-page {
     padding: 1.5rem;
+  }
+  
+  .no-membership-card {
+    padding: 3rem 1.5rem;
+  }
+  
+  .no-membership-icon {
+    font-size: 3rem;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { HiUser, HiMail, HiLockClosed, HiUserGroup, HiCheckCircle } from "react-icons/hi";
+import { HiUser, HiMail, HiLockClosed, HiUserGroup, HiCheckCircle, HiClock, HiPhone, HiEye, HiEyeOff } from "react-icons/hi";
 import apiClient from "../services/api";
 import "./Auth.css";
 
@@ -8,12 +8,16 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     role: "member",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pendingApproval, setPendingApproval] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -40,16 +44,22 @@ const Register = () => {
       const response = await apiClient.post("/auth/register", {
         name: formData.name,
         email: formData.email,
+        phone: formData.phone,
         password: formData.password,
         role: formData.role,
       });
 
       if (response.data.status === "success") {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-        localStorage.setItem("userRole", response.data.data.role);
-        navigate("/");
-        window.location.reload();
+        // Check if trainer pending approval
+        if (response.data.pending_approval) {
+          setPendingApproval(true);
+        } else {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.data));
+          localStorage.setItem("userRole", response.data.data.role);
+          navigate("/");
+          window.location.reload();
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
@@ -57,6 +67,30 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  // Show pending approval message for trainers
+  if (pendingApproval) {
+    return (
+      <div className="auth-container register-page">
+        <div className="auth-card pending-card">
+          <div className="pending-icon">
+            <HiClock />
+          </div>
+          <h2>Registration Submitted!</h2>
+          <p className="pending-message">
+            Your trainer application has been submitted successfully. 
+            Please wait for admin approval before you can login.
+          </p>
+          <p className="pending-info">
+            You will be notified once your application is reviewed.
+          </p>
+          <Link to="/login" className="btn-submit">
+            <HiCheckCircle /> Go to Login Page
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container register-page">
@@ -101,30 +135,59 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label><HiLockClosed /> Password</label>
+            <label><HiPhone /> Phone Number</label>
             <div className="input-wrapper">
               <input
-                type="password"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter your phone number (optional)"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label><HiLockClosed /> Password</label>
+            <div className="input-wrapper password-input">
+              <input
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 required
                 placeholder="Create a password (min. 6 characters)"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <HiEyeOff /> : <HiEye />}
+              </button>
             </div>
           </div>
 
           <div className="form-group">
             <label><HiCheckCircle /> Confirm Password</label>
-            <div className="input-wrapper">
+            <div className="input-wrapper password-input">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
                 placeholder="Confirm your password"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? <HiEyeOff /> : <HiEye />}
+              </button>
             </div>
           </div>
 
@@ -152,6 +215,11 @@ const Register = () => {
                 </div>
               </div>
             </div>
+            {formData.role === 'trainer' && (
+              <p className="role-notice">
+                <HiClock /> Trainer accounts require admin approval before activation.
+              </p>
+            )}
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading}>

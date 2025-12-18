@@ -9,4 +9,5 @@ def includeme(config):
     # Membership management routes
     config.add_route('api_membership_plans', '/api/membership/plans')
     config.add_route('api_my_membership', '/api/membership/my')
+    config.add_route('api_membership_subscribe', '/api/membership/subscribe')
     config.add_route('api_members', '/api/members')
