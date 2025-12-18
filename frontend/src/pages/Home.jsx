@@ -101,7 +101,7 @@ const Home = () => {
       <section className="features-section">
         <div className="container">
           <div className="section-header" data-aos="fade-up">
-            <h2 className="section-title">Why Choose FitZone?</h2>
+            <h2 className="section-title">Why Choose Hydroo Gym?</h2>
             <p className="section-subtitle">
               Discover the benefits that make us the premier fitness destination
             </p>
