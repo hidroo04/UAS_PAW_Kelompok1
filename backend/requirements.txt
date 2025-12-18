@@ -1,6 +1,9 @@
 # Core Framework
 pyramid==2.0.2
 waitress==2.1.2
+PasteDeploy==3.1.0
+plaster==1.1.2
+plaster_pastedeploy==1.0.1
 
 # Database
 SQLAlchemy==2.0.23
@@ -18,6 +21,12 @@ python-dotenv==1.0.0
 # CORS
 pyramid-cors==0.2
 
+# Transaction management
+transaction==4.0
+pyramid_tm==2.5
+zope.sqlalchemy==3.1
+
 # Testing (optional)
 pytest==7.4.3
 pytest-cov==4.1.0
+
