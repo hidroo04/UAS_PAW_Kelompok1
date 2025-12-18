@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install --upgrade pip setuptools wheel && pip install -e ."
+
+[deploy]
+startCommand = "pserve production.ini"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
