@@ -100,7 +100,7 @@ const Register = () => {
             <HiUserGroup />
           </div>
           <h2>Create Account</h2>
-          <p className="auth-subtitle">Join FitZone Gym today</p>
+          <p className="auth-subtitle">Join Hydroo Gym today</p>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}

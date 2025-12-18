@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="footer-section footer-about">
           <div className="footer-logo">
             <FaDumbbell className="footer-logo-icon" />
-            <h3>FitZone Gym</h3>
+            <h3>Hydroo Gym</h3>
           </div>
           <p>Transform your body, elevate your mind, and achieve your fitness goals with our world-class facilities and expert trainers.</p>
           <div className="social-links">
@@ -50,7 +50,7 @@ const Footer = () => {
             </li>
             <li>
               <FaEnvelope className="contact-icon" />
-              <span>info@fitzonegym.com</span>
+              <span>info@hydroogym.com</span>
             </li>
             <li>
               <FaPhone className="contact-icon" />
@@ -66,7 +66,7 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2025 FitZone Gym - UAS PAW Kelompok 1. All rights reserved.</p>
+        <p>&copy; 2025 Hydroo Gym - UAS PAW Kelompok 1. All rights reserved.</p>
       </div>
     </footer>
   );

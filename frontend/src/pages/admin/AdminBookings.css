@@ -21,15 +21,22 @@
   background: rgba(42, 42, 42, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 12px;
   border: 1px solid rgba(255, 107, 53, 0.15);
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .total-badge {
@@ -41,27 +48,19 @@
   border-radius: 10px;
   border: 1px solid rgba(255, 107, 53, 0.3);
   color: #ff6b35;
-  font-size: 1rem;
+  font-size: 0.9rem;
   white-space: nowrap;
+  margin-left: auto;
 }
 
 .total-badge svg {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 .total-badge strong {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #ffffff;
   margin-right: 0.25rem;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 280px;
-  max-width: 500px;
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .search-box svg {
@@ -69,41 +68,46 @@
   left: 1rem;
   color: #888888;
   font-size: 1.1rem;
+  pointer-events: none;
+  margin-left: 0.5rem;
 }
 
 .search-box input {
   width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  background: rgba(30, 30, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  background: linear-gradient(145deg, rgba(30, 30, 30, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 12px;
+  font-size: 0.95rem;
   color: #ffffff;
   transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .search-box input::placeholder {
-  color: #888888;
+  color: #666666;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: rgba(255, 107, 53, 0.5);
-  background: rgba(30, 30, 30, 0.8);
+  border-color: #ff6b35;
+  background: linear-gradient(145deg, rgba(35, 35, 35, 0.9) 0%, rgba(45, 45, 45, 0.7) 100%);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .status-filters {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-left: auto;
 }
 
 .status-filters button {
-  padding: 0.875rem 1.25rem;
+  padding: 0.65rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(50, 50, 50, 0.4);
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #ffffff;
   cursor: pointer;

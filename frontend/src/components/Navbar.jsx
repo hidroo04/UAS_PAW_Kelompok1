@@ -55,7 +55,7 @@ const Navbar = () => {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
           <FaDumbbell className="logo-icon" />
-          <span>FitZone Gym</span>
+          <span>Hydroo Gym</span>
         </Link>
 
         <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
