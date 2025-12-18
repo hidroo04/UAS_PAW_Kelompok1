@@ -28,6 +28,8 @@ EXPOSE 8080
 
 # Set environment variables
 ENV PORT=8080
+ENV DATABASE_URL=postgresql://neondb_owner:npg_nHK1Dyo0TrtC@ep-orange-frog-a15c4gak-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
 
 # Start command
 CMD ["pserve", "production.ini"]
+
