@@ -12,7 +12,10 @@ import {
   FaExclamationTriangle,
   FaCheckCircle,
   FaTimesCircle,
-  FaSpinner
+  FaSpinner,
+  FaDumbbell,
+  FaIdBadge,
+  FaStar
 } from 'react-icons/fa';
 import apiClient from '../../services/api';
 import Loading from '../../components/Loading';
@@ -139,29 +142,41 @@ const AdminTrainers = () => {
 
       {/* Stats Cards */}
       <div className="stats-grid">
-        <div className="stat-card pending" onClick={() => setStatusFilter('pending')}>
+        <div 
+          className={`stat-card pending ${statusFilter === 'pending' ? 'active' : ''}`} 
+          onClick={() => setStatusFilter('pending')}
+        >
           <div className="stat-icon"><FaClock /></div>
           <div className="stat-info">
             <h3>{counts.pending}</h3>
             <p>Pending Approval</p>
           </div>
         </div>
-        <div className="stat-card approved" onClick={() => setStatusFilter('approved')}>
+        <div 
+          className={`stat-card approved ${statusFilter === 'approved' ? 'active' : ''}`} 
+          onClick={() => setStatusFilter('approved')}
+        >
           <div className="stat-icon"><FaCheckCircle /></div>
           <div className="stat-info">
             <h3>{counts.approved}</h3>
             <p>Approved</p>
           </div>
         </div>
-        <div className="stat-card rejected" onClick={() => setStatusFilter('rejected')}>
+        <div 
+          className={`stat-card rejected ${statusFilter === 'rejected' ? 'active' : ''}`} 
+          onClick={() => setStatusFilter('rejected')}
+        >
           <div className="stat-icon"><FaTimesCircle /></div>
           <div className="stat-info">
             <h3>{counts.rejected}</h3>
             <p>Rejected</p>
           </div>
         </div>
-        <div className="stat-card total" onClick={() => setStatusFilter('all')}>
-          <div className="stat-icon"><FaUserTie /></div>
+        <div 
+          className={`stat-card total ${statusFilter === 'all' ? 'active' : ''}`} 
+          onClick={() => setStatusFilter('all')}
+        >
+          <div className="stat-icon"><FaDumbbell /></div>
           <div className="stat-info">
             <h3>{counts.total}</h3>
             <p>Total Trainers</p>
@@ -228,14 +243,18 @@ const AdminTrainers = () => {
             </p>
           </div>
         ) : (
-          filteredTrainers.map(trainer => (
-            <div key={trainer.id} className={`trainer-card ${trainer.approval_status}`}>
+          filteredTrainers.map((trainer, index) => (
+            <div 
+              key={trainer.id} 
+              className={`trainer-card ${trainer.approval_status}`}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <div className="trainer-avatar">
                 <FaUserTie />
               </div>
               <div className="trainer-info">
                 <div className="trainer-header">
-                  <h3>{trainer.name}</h3>
+                  <h3><FaIdBadge className="name-icon" /> {trainer.name}</h3>
                   {getStatusBadge(trainer.approval_status)}
                 </div>
                 <div className="trainer-details">
@@ -286,9 +305,14 @@ const AdminTrainers = () => {
                     {processingId === trainer.id ? (
                       <FaSpinner className="spinner" />
                     ) : (
-                      <><FaCheck /> Approve</>
+                      <><FaCheck /> Re-Approve</>
                     )}
                   </button>
+                )}
+                {trainer.approval_status === 'approved' && (
+                  <div className="approved-badge">
+                    <FaStar /> <span>Active Trainer</span>
+                  </div>
                 )}
               </div>
             </div>
