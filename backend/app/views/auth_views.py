@@ -21,6 +21,16 @@ JWT_EXP_DELTA_SECONDS = config.JWT_EXPIRATION_HOURS * 3600
 create_jwt_token = create_token_util
 
 
+@view_config(route_name='api_health', renderer='json', request_method='GET')
+def health_check(request):
+    """Health check endpoint for Railway deployment"""
+    return {
+        'status': 'ok',
+        'message': 'FitZone API is running',
+        'timestamp': datetime.now().isoformat()
+    }
+
+
 @view_config(route_name='auth_register', renderer='json', request_method='POST')
 def register(request):
     """Register new user"""

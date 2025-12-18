@@ -9,6 +9,9 @@ def includeme(config):
     # Home route
     config.add_route('home', '/')
     
+    # Health check for Railway/deployment
+    config.add_route('api_health', '/api/health')
+    
     # Authentication routes
     config.add_route('auth_register', '/api/auth/register')
     config.add_route('auth_login', '/api/auth/login')
