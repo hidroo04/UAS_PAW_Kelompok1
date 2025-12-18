@@ -1,7 +1,11 @@
 import axios from "axios";
 
+// Production: Railway backend, Development: localhost
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:6543/api";
+  import.meta.env.VITE_API_URL || 
+  (window.location.hostname === 'localhost' 
+    ? "http://localhost:6543/api" 
+    : "https://uaspawkelompok1.up.railway.app/api");
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
