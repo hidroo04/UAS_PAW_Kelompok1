@@ -19,7 +19,7 @@ Sistem manajemen gym yang komprehensif dengan fitur booking kelas, manajemen mem
   - Authentication & authorization
   - Business logic implementation
   
-- **Frontend Development**: Mega Zayani, Maxavier Girvanus Manurung
+- **Frontend Development**: Mega Zayyani, Maxavier Girvanus Manurung
   - React component development
   - UI/UX implementation
   - State management
@@ -844,5 +844,6 @@ Setelah menjalankan seed data, gunakan credentials berikut:
 | Member | Hannah White | hannah@member.com | member123 |
 | Member | Ian Harris | ian@member.com | member123 |
 | Member | Julia Clark | julia@member.com | member123 |
+
 
 
