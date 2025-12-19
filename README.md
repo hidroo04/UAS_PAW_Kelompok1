@@ -249,12 +249,12 @@ python seed_data.py
 ## 🔗 Link Deployment
 
 ### Frontend
-**URL**: [https://your-frontend-url.vercel.app](https://your-frontend-url.vercel.app)
+**URL**: [https://uas-paq-kelompok1.vercel.app](https://uas-paw-kelompok1.vercel.app/)
 - Deployed on Vercel
 - Automatic deployments from main branch
 
 ### Backend
-**API URL**: [https://your-backend-url.railway.app](https://your-backend-url.railway.app)
+**API URL**: [https://uaspawkelompok1.up.railway.app](https://uaspawkelompok1.up.railway.app/)
 - Deployed on Railway
 - PostgreSQL database hosted on Neon
 - Environment variables configured in Railway dashboard
@@ -844,6 +844,7 @@ Setelah menjalankan seed data, gunakan credentials berikut:
 | Member | Hannah White | hannah@member.com | member123 |
 | Member | Ian Harris | ian@member.com | member123 |
 | Member | Julia Clark | julia@member.com | member123 |
+
 
 
 
