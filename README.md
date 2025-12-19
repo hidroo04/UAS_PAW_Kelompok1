@@ -776,19 +776,19 @@ Semua endpoint dapat mengembalikan error responses berikut:
 ## 📸 Screenshot Aplikasi
 
 ### 1. Landing Page
-![Landing Page](screenshot1.png)
+![Landing Page](Screenshots/landing-page.png)
 Halaman utama aplikasi dengan hero section dan call-to-action untuk browse classes dan join membership.
 
 ### 2. Home Page - Member Dashboard
-![Home Page](screenshot2.png)
+![Home Page](Screenshots/dashboard-member.png)
 Dashboard member yang menampilkan class browser, membership options, dan personal booking information.
 
 ### 3. Admin Dashboard
-![Admin Dashboard](screenshot3.png)
+![Admin Dashboard](Screenshots/dashboard-admin.png)
 Admin dashboard dengan comprehensive analytics termasuk total members (14), classes (11), bookings (17), trainers (7), monthly revenue (Rp 3.1M), booking growth tracking, dan metrics lainnya seperti most active day dan class capacity utilization.
 
 ### 4. Trainer Dashboard - My Classes
-![Trainer Dashboard](screenshot4.png)
+![Trainer Dashboard](Screenshots/dashboard-trainer.png)
 Dashboard trainer untuk manage classes dengan informasi member enrollment, available slots, dan schedule management. Menampilkan kelas seperti "Yogaa class" dan "Morning yoga" dengan detail jadwal dan kapasitas.
 
 ## 🎥 Video Presentasi
@@ -843,4 +843,5 @@ Setelah menjalankan seed data, gunakan credentials berikut:
 | Member | George Thomas | george@member.com | member123 |
 | Member | Hannah White | hannah@member.com | member123 |
 | Member | Ian Harris | ian@member.com | member123 |
+
 | Member | Julia Clark | julia@member.com | member123 |
