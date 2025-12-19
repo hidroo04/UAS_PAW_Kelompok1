@@ -7,7 +7,7 @@ Sistem manajemen gym yang komprehensif dengan fitur booking kelas, manajemen mem
 | Nama | NIM | Role |
 |------|-----|------|
 | Ripaldy Saputra Lumbantoruan | 123140179 | Backend Developer |
-| Mega Zayani | 123140180 | Frontend Developer |
+| Mega Zayyani | 123140180 | Frontend Developer |
 | Gilang Surya Agung | 123140187 | Backend Developer |
 | Maxavier Girvanus Manurung | 123140191 | Frontend Developer |
 | Muhammad Rafiq Ridho | 123140197 | Database Administrator |
@@ -844,4 +844,5 @@ Setelah menjalankan seed data, gunakan credentials berikut:
 | Member | Hannah White | hannah@member.com | member123 |
 | Member | Ian Harris | ian@member.com | member123 |
 | Member | Julia Clark | julia@member.com | member123 |
+
 
