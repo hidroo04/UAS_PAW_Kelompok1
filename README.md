@@ -843,5 +843,5 @@ Setelah menjalankan seed data, gunakan credentials berikut:
 | Member | George Thomas | george@member.com | member123 |
 | Member | Hannah White | hannah@member.com | member123 |
 | Member | Ian Harris | ian@member.com | member123 |
-
 | Member | Julia Clark | julia@member.com | member123 |
+
